@@ -1,0 +1,13 @@
+# The following lines were added by compinstall
+
+zstyle ':completion:*' completer _complete _ignored _approximate
+zstyle ':completion:*' expand suffix
+zstyle ':completion:*' format 'completing %d'
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' preserve-prefix '//[^/]##/'
+zstyle :compinstall filename '/home/mitchell/.compinstall'
+
+autoload -Uz compinit
+compinit
+# End of lines added by compinstall
