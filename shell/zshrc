@@ -1,3 +1,9 @@
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_SAVE_NO_DUPS
+setopt HIST_REDUCE_BLANKS
+setopt INC_APPEND_HISTORY_TIME
+setopt EXTENDED_HISTORY
+
 zstyle ':completion:*' completer _complete _ignored _approximate
 zstyle ':completion:*' expand suffix
 zstyle ':completion:*' format 'completing %d'
@@ -7,3 +13,6 @@ zstyle ':completion:*' preserve-prefix '//[^/]##/'
 
 autoload -Uz compinit
 compinit
+
+alias ll='ls -al'
+alias qutebrowser='qutebrowser --qt-flag disable-seccomp-filter-sandbox'
