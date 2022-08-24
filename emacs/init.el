@@ -1,46 +1,42 @@
-(toggle-scroll-bar -1)
-(tool-bar-mode -1)
-(menu-bar-mode -1)
-(eldoc-mode 1)
-(column-number-mode)
-(global-display-line-numbers-mode)
-(setq display-line-numbers 'relative)
+(server-start)
 
-;; Disable line numbers for some modes
-(dolist (mode '(org-mode-hook
-		term-mode-hook
-		eshell-mode-hook))
-  (add-hook mode
-	    (lambda () (display-line-numbers-mode 0))))
+(setq inhibit-startup-screen t)
+(defalias 'yes-or-no-p 'y-or-n-p)
 
-(setq inhibit-splash-screen t)
-(setq inhibit-startup-message t)
-(setq visible-bell t)
-(setq gc-cons-threshold (* 50 1000 1000))
-(setq vc-follow-symlinks t)
+;; Use yyyy/mm/dd
+(setq calendar-date-style 'iso)
 
-(add-hook 'emacs-startup-hook
-	  (lambda ()
-	    (message "*** Emacs loaded in %s with %d garbage collections."
-		     (format "%.2f seconds"
-			     (float-time
-			      (time-subtract after-init-time before-init-time)))
-		     gcs-done)))
-
-(setq comp-async-report-warnings-errors nil)
-(setq backup-directory-alist '(("." . "~/.emacs.d/saves")))
+(add-hook 'prog-mode-hook
+	  (lambda () (interactive)
+	    (display-line-numbers-mode 1)
+	    (setq show-trailing-whitespace 1)
+	    (setq display-line-numbers 'relative)))
 
 (show-paren-mode t)
+(column-number-mode t)
+(eldoc-mode 1)
+(tool-bar-mode -1)
+(scroll-bar-mode -1)
+(menu-bar-mode -1)
 
-(setq calendar-date-style 'iso)
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+(global-unset-key (kbd "C-h"))
+(global-unset-key (kbd "C-x C-c"))
 
 (add-hook 'before-save-hook 'whitespace-cleanup)
 (add-hook 'before-save-hook (lambda () (delete-trailing-whitespace)))
 
+
+(setq backup-directory-alist '(("." . "~/.emacs-saves")))
+
 (require 'use-package)
 
+(use-package gruvbox
+  :config (load-theme 'gruvbox-dark-soft t))
+
+
 (defun mfs/evil-hook ()
-  (dolist (mode '(custom-mode
+  (dolist (mode '(custom-shell
 		  eshell-mode
 		  git-rebase-mode
 		  repl-mode
