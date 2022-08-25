@@ -4,7 +4,7 @@
 
 # Proxy to Emacs if it is the active window
 if [[ "$(xdotool getactivewindow getwindowclassname)" == "Emacs" ]]; then
-    command="(my/wm-integration \"$@\")"
+    command="(mfs/wm-integration \"$@\")"
     if emacsclient -e "$command"; then
 	exit
     fi
