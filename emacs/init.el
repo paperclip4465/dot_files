@@ -322,3 +322,12 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+
+(require 'windmove)
+
+(defun mfs/wm-integration (command)
+  (pcase command
+    ((rx bos "focus")
+     (windmove-do-window-select
+      (intern (elt (split-string command) 1))))
+    (- (error command))))
