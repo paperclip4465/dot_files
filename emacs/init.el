@@ -105,6 +105,15 @@
   :config
   (evil-collection-init))
 
+(use-package magit
+  :config
+  ;; Force magit to reuse magit buffers and display them "properly"
+  (add-to-list 'display-buffer-alist
+	       `(,(make-display-buffer-matcher-function '(magit-mode))
+		 (display-buffer-reuse-mode-window
+		  display-buffer-in-direction)
+		 (mode magit-mode))))
+
 (use-package which-key)
 
 (use-package undo-tree
