@@ -30,6 +30,29 @@
 
 (setq backup-directory-alist '(("." . "~/.emacs-saves")))
 
+(defun make-display-buffer-matcher-function (major-modes)
+  (lambda (buffer-name action)
+    (with-current-buffer buffer-name (apply #'derived-mode-p major-modes))))
+
+;; Get info windows to open in a nice way...
+(add-to-list 'display-buffer-alist
+	     '("\\*info\\*"
+	       (display-buffer-in-side-window)
+	       (side . right)
+	       (slot . 0)
+	       (window-width . 80)
+	       (window-parameters
+		(no-delete-other-windows . t))))
+
+;; Reuse windows for these things
+(add-to-list 'display-buffer-alist
+	  `(,(rx (| "*xref*"
+		    "*grep*"
+		    "*Occur*"))
+	    display-buffer-reuse-window
+	    (inhibit-same-window . nil)))
+
+
 (require 'use-package)
 
 (use-package gruvbox
