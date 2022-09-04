@@ -1,5 +1,6 @@
 (server-start)
 
+(setq lexical-binding t)
 (setq inhibit-startup-screen t)
 (defalias 'yes-or-no-p 'y-or-n-p)
 
