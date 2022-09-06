@@ -10,7 +10,7 @@
 # Please see https://i3wm.org/docs/userguide.html for a complete reference!
 
 set $mod Mod4
-set $term st
+set $term urxvt
 
 bindsym $mod+Return exec $term
 
@@ -55,10 +55,10 @@ set $up k
 set $down j
 
 # change focus
-bindsym $mod+$left focus left
-bindsym $mod+$down focus down
-bindsym $mod+$up focus up
-bindsym $mod+$right focus right
+bindsym $mod+$left exec i3-msg-proxy focus left
+bindsym $mod+$down exec i3-msg-proxy focus down
+bindsym $mod+$up exec i3-msg-proxy focus up
+bindsym $mod+$right exec i3-msg-proxy focus right
 
 # alternatively, you can use the cursor keys:
 bindsym $mod+Left focus left
