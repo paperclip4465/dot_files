@@ -174,13 +174,17 @@
    ("M-x" . counsel-M-x)
    ("C-x b" . ivy-switch-buffer)))
 
-(use-package geiser)
 (use-package geiser-guile)
+
+(use-package geiser
+  :hook ((geiser-repl-mode) . 'company-mode))
+
 (use-package guix
   :hook
   ((shell-mode) . 'guix-build-log-minor-mode))
 
 (use-package company
+  :hook ((prog-mode) . 'company-mode)
   :custom
   (company-minimum-prefix-length 1)
   (company-idle-delay 0.0))
