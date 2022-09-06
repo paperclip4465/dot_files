@@ -172,7 +172,14 @@
   :bind
   (("C-x C-f" . counsel-find-file)
    ("M-x" . counsel-M-x)
-   ("C-x b" . ivy-switch-buffer)))
+   ("C-x b" . ivy-switch-buffer)
+   :map ivy-minibuffer-map
+   ("C-j" . ivy-next-line)
+   ("C-k" . ivy-previous-line)
+   ("C-h" . counsel-up-directory-level)
+   ("C-l" . ivy-done)
+   ;; exit ivy selection with current text ignoring canidates
+   ("C-<return>" . (lambda () (interactive) (ivy-alt-done t)))))
 
 (use-package geiser-guile)
 
