@@ -1,13 +1,13 @@
 #!/bin/sh
 
-SCRIPT_DIR=$XDG_CONFIG_HOME/mfs-script-picker
-mkdir -p $SCRIPT_DIR
+LAYOUT_DIR=$XDG_CONFIG_HOME/mfs-screenlayouts
+mkdir -p $LAYOUT_DIR
 
 function usage {
-    echo "This script provides a dmenu script executer"
+    echo "This layout provides a dmenu script executer"
     echo "Usage: $(basename $0) [-hdl]" 2>&1
     echo '   -h   show this menu'
-    echo '   -d   print script location'
+    echo '   -d   print layout location'
     exit 0
 }
 
@@ -18,7 +18,7 @@ while getopts ":hdl" opt; do
 	    usage
 	    ;;
 	d)
-	    echo $SCRIPT_DIR
+	    echo $LAYOUT_DIR
 	    ;;
 	\?)
 	    echo "Invalid option: -$OPTARG" >&2
@@ -27,8 +27,8 @@ while getopts ":hdl" opt; do
 done
 
 
-selection=$(ls ${SCRIPT_DIR} | dmenu -p "Select Layout")
+selection=$(ls ${LAYOUT_DIR} | dmenu -p "Select Layout")
 
 if [ "" != "${selection}" ] ; then
-    exec ${SCRIPT_DIR}/${selection}
+    exec ${LAYOUT_DIR}/${selection}
 fi
