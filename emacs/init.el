@@ -30,10 +30,6 @@
 
 (setq backup-directory-alist '(("." . "~/.emacs-saves")))
 
-(defun make-display-buffer-matcher-function (major-modes)
-  (lambda (buffer-name action)
-    (with-current-buffer buffer-name (apply #'derived-mode-p major-modes))))
-
 ;; Get info windows to open in a nice way...
 (add-to-list 'display-buffer-alist
 	     '("\\*info\\*"
@@ -104,15 +100,6 @@
   :ensure nil
   :config
   (evil-collection-init))
-
-(use-package magit
-  :config
-  ;; Force magit to reuse magit buffers and display them "properly"
-  (add-to-list 'display-buffer-alist
-	       `(,(make-display-buffer-matcher-function '(magit-mode))
-		 (display-buffer-reuse-mode-window
-		  display-buffer-in-direction)
-		 (mode magit-mode))))
 
 (use-package which-key)
 
