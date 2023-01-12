@@ -261,9 +261,6 @@ bindsym $mod+Shift+c reload			# reload the configuration file
 bindsym $mod+Shift+r restart			# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 # kill focused window
 bindsym $mod+Shift+q kill
-bindsym $mod+m exec --no-startup-id spotify			# start spotify
-bindsym $mod+i exec --no-startup-id $term -- htop	# launch htop
-bindsym $mod+F1 exec --no-startup-id firefox
 bindsym $mod+Print exec --no-startup-id shutter			# launch screencap thing
 
 # exit i3 (logs you out of your X session)
