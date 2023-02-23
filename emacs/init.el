@@ -1,10 +1,24 @@
+;;; Init.el --- emacs start up file
+;;; Commentary:
+;;; Code:
+
 (server-start)
 
+(load-theme 'modus-vivendi)
+
+(defvar mfs-home (getenv "HOME")
+  "Home environment variable which is not always the same on every computer.")
+
+(defun mfs-home-path (file)
+  "Return the absolute filepath of FILE, a file located in $HOME."
+  (concat mfs-home "/" file))
+
+(defun mfs-emacs-path (file)
+  "Return absolute path of FILE in 'user-emacs-directory'."
+  (concat user-emacs-directory "/" file))
+
 ;; Personal Information
-(setq user-full-name "Mitchell Schmeisser"
-      user-mail-address (if (string-match-p user-login-name "mitchell")
-			    "mitchellschmeisser@librem.one"
-			  "mfs5173@arl.psu.edu"))
+(setq user-full-name "Mitchell Schmeisser")
 
 (setq lexical-binding t)
 (defalias 'yes-or-no-p 'y-or-n-p)
@@ -48,8 +62,6 @@
 
 (setq backup-directory-alist '(("." . "~/.emacs.d/emacs-saves")))
 
-(defvar ensured-package-list '())
-
 ;; Get info windows to open in a nice way...
 (add-to-list 'display-buffer-alist
 	     '("\\*info\\*"
@@ -62,15 +74,19 @@
 
 ;; Reuse windows for these things
 (add-to-list 'display-buffer-alist
-	  `(,(rx (| "*xref*"
-		    "*grep*"
-		    "*Occur*"))
-	    display-buffer-reuse-window
-	    (inhibit-same-window . nil)))
+	     `(,(rx (| "*xref*"
+		       "*grep*"
+		       "*Occur*"))
+	       display-buffer-reuse-window
+	       (inhibit-same-window . nil)))
 
 (require 'windmove)
 
 (defun mfs/wm-integration (command)
+  "Window manager integration function.
+The window manager calls this via emacsclient
+to move by Emacs window instead of by window manager window.
+COMMAND is a 'windmove' command."
   (pcase command
     ((rx bos "focus")
      (windmove-do-window-select
@@ -79,7 +95,9 @@
 
 (require 'use-package)
 
+
 (defun mfs/evil-hook ()
+  "Enable evil mode in these additional modes."
   (dolist (mode '(custom-shell
 		  eshell-mode
 		  git-rebase-mode
@@ -93,6 +111,7 @@
     (add-to-list 'evil-emacs-state-modes mode)))
 
 (use-package evil
+
   :after company
   :init
   (setq evil-want-integration nil)
@@ -114,13 +133,24 @@
 (use-package evil-collection
 
   :after evil
-  :init
-  (setq evil-collection-company-use-tng nil)
   :custom
   (evil-collection-outline-bind-tab-p nil)
-  :ensure nil
   :config
   (evil-collection-init))
+
+(use-package org
+  :init
+  (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+  (setq org-cite-global-bibliography
+	`(,(mfs-emacs-path "org-cite/cite.bib")))
+  :config
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((shell . t)
+     (scheme . t)))
+  (setq org-todo-keywords
+	'((sequence "TODO" "NEXT" "IN-PROGRESS" "|" "DONE")))
+  (setq org-agenda-files '("~/org/")))
 
 (use-package which-key
   )
@@ -145,45 +175,19 @@
   (setq projectile-switch-project-action #'projectile-dired)
   (setq projectile-enable-caching t))
 
-(use-package sly
-
-  :init
-  (setq inferior-lisp-program "~/.guix-profile/bin/sbcl")
-  :bind
-  (:map sly-mode-map
-	("C-c C-k" . sly-compile-file)
-	("C-c C-c" . sly-eval-defun)
-	("M-." . sly-edit-definition))
-  :config
-  (setq sly-autodoc-use-multiline-p t))
-
 
 (use-package rainbow-delimiters
-
   :hook ((prog-mode lisp-mode emacs-lisp-mode) . 'rainbow-delimiters-mode)
   :config
   (rainbow-delimiters-mode 1))
 
-(use-package paredit
-
-  :hook
-  (((lisp-mode scheme-mode emacs-lisp-mode) . 'enable-paredit-mode))
-  :bind
-  (:map paredit-mode-map
-	("C-l" . paredit-forward-slurp-sexp)
-	("C-h" . paredit-forward-barf-sexp)
-	("M-l" . paredit-backward-barf-sexp)
-	("M-h" . paredit-backward-slurp-sexp)))
-
 (use-package ivy
-
   :config
   (setq ivy-use-virtual-buffers t
 	ivy-count-format "%d/%d ")
   (ivy-mode))
 
 (use-package counsel
-
   :after ivy
   :config
   (put 'counsel-find-symbol 'no-counsel-M-x t)
@@ -199,12 +203,6 @@
    ;; exit ivy selection with current text ignoring canidates
    ("C-<return>" . (lambda () (interactive) (ivy-alt-done t)))))
 
-(use-package geiser-guile
-  )
-
-(use-package geiser
-
-  :hook ((geiser-repl-mode) . 'company-mode))
 
 (use-package guix
 
@@ -214,7 +212,6 @@
   (("C-c g" . guix-popup)))
 
 (use-package company
-
   :hook ((prog-mode) . 'company-mode)
   :custom
   (company-minimum-prefix-length 1)
@@ -245,22 +242,7 @@
   (define-key c-mode-map [(tab)] 'company-complete)
   (define-key c++-mode-map [(tab)] 'company-complete))
 
-(use-package org
-
-  :init
-  (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-  (setq org-cite-global-bibliography '("/home/mitchell/.emacs.d/org-cite/cite.bib"))
-  :config
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((shell . t)
-     (scheme . t)))
-  (setq org-todo-keywords
-	'((sequence "TODO" "NEXT" "IN-PROGRESS" "|" "DONE")))
-  (setq org-agenda-files '("~/org/")))
-
 (use-package evil-org
-
   :config
   (evil-org-set-key-theme '(navigation insert textobjects additional calendar))
   (require 'evil-org-agenda)
@@ -268,7 +250,6 @@
   (setq org-agenda-start-on-weekday 0))
 
 (use-package org-roam
-
   :init (setq org-roam-v2-ack t)
   :custom (org-roam-directory "~/RoamNotes")
   :bind
@@ -278,7 +259,6 @@
   :config (org-roam-setup))
 
 (use-package dashboard
-
   :config
   (dashboard-setup-startup-hook)
   (setq dashboard-items '((projects . 10)
@@ -308,21 +288,17 @@
 (use-package kconfig)
 
 
-(use-package embark
+(use-package magit)
 
-    :config
-    (define-key global-map (kbd "C-,") #'embark-act)
-    (define-key embark-collect-mode-map (kbd "C-,") #'embark-act)
-    (let ((map minibuffer-local-completion-map))
-      (define-key map (kbd "C-,") #'embark-act)
-      (define-key map (kbd "C->") #'embark-become))
-    (setq embark-quit-after-action t
-	  embark-indicators '(embark-mixed-indicator
-			      embark-highlight-indicator)
-	  embark-verbose-indicator-excluded-actions
-	  '("\\`customize-" "\\(local\\|global\\)-set-key"
-	    set-variable embark-cycle embark-keymap-help embark-isearch)
-	  embark-verbose-indicator-display-action nil))
+(require 'mfs-lisp)
 
-(use-package magit
-  )
+(require 'mfs-web)
+(require 'mfs-completion)
+(require 'mfs-mail)
+
+(use-package ansi-color
+  :config
+  (defun my-colorize-compilation-buffer ()
+    (when (eq major-mode 'compilation-mode)
+      (ansi-color-apply-on-region compilation-filter-start (point-max))))
+  :hook (compilation-filter . my-colorize-compilation-buffer))

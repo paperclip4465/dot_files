@@ -1,4 +1,5 @@
-(enable-recursive-minibuffers t)
+(require 'use-package)
+
 (setq resize-mini-windows t)
 (setq read-answer-short t)
 (setq echo-keystrokes 0.25)
@@ -27,6 +28,6 @@
   (setq vertico-scroll-margin 0)
   (setq vertico-count 10)
   (setq vertico-resize nil)
-  (setq vertico-cycle t)
+  (setq vertico-cycle t))
 
-  (veritco-mode 1))
+(provide 'mfs-completion)

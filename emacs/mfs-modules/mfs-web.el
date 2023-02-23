@@ -1,3 +1,5 @@
+(require 'use-package)
+
 (use-package browse-url
   :config
   (setq browse-url-browser-function 'eww-browse-url)
@@ -8,9 +10,8 @@
   (setq shr-use-colors nil)
   (setq shr-use-fonts nil)
   (setq shr-max-image-proportion 0.6)
-  (setq shr-width fill-column)o
+  (setq shr-width fill-column)
   (setq shr-max-width fill-column)
-
   (setq shr-discard-aria-hidden t)
   (setq shr-cookie-policy nil))
 
@@ -20,7 +21,7 @@
 
 (use-package eww
   :init
-  (mkdir "~/Downloads/eww-downloads")
+  (setq eww-download-directory (expand-file-name "~/Documents/eww-downloads"))
   :bind
   (:map
    dired-mode-map
@@ -44,3 +45,5 @@
 
 (define-prefix-command 'mfs-eww-map)
 (define-key global-map (kbd "C-c w") 'mfs-eww-map)
+
+(provide 'mfs-web)
