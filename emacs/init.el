@@ -205,11 +205,13 @@ COMMAND is a 'windmove' command."
 
 
 (use-package guix
-
   :hook
   ((shell-mode) . 'guix-build-log-minor-mode)
   :bind
-  (("C-c g" . guix-popup)))
+  (("C-c g" . guix-popup))
+  :config
+  (require 'emacs-guix)
+  (guix-eval-in-repl "(use-modules (emacs-guix packages))"))
 
 (use-package company
   :hook ((prog-mode) . 'company-mode)
