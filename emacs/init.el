@@ -153,10 +153,10 @@ COMMAND is a 'windmove' command."
   (setq org-agenda-files '("~/org/")))
 
 (use-package which-key
-  )
+  :config
+  (which-key-mode))
 
 (use-package undo-tree
-
   :custom
   (undo-tree-history-directory-alist
    '(("." . "~/.emacs.d/undo")))
