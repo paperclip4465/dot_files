@@ -59,8 +59,11 @@
 (add-hook 'before-save-hook 'whitespace-cleanup)
 (add-hook 'before-save-hook (lambda () (delete-trailing-whitespace)))
 
+(load-theme 'modus-operandi)
+
 (setq backup-directory-alist '(("." . "~/.emacs.d/emacs-saves")))
 
+(setq display-buffer-alist '())
 ;; Get info windows to open in a nice way...
 (add-to-list 'display-buffer-alist
 	     '("\\*info\\*"
