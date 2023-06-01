@@ -74,6 +74,18 @@
 	       (window-parameters
 		(no-delete-other-windows . t))))
 
+(add-to-list 'display-buffer-alist
+	     `(,(rx (| "\\*Compilation\\*"
+		       "\\*xref\\*"))
+	       (display-buffer-reuse-mode-window
+		display-buffer-in-side-window)
+	       (reusable-frames . t)
+	       (side . bottom)
+	       (slot . 0)
+	       (window-height . 20)
+	       (window-parameters
+		(no-delete-other-windows . t))))
+
 ;; Reuse windows for these things
 (add-to-list 'display-buffer-alist
 	     `(,(rx (| "*xref*"
@@ -94,6 +106,7 @@ COMMAND is a 'windmove' command."
      (windmove-do-window-select
       (intern (elt (split-string command) 1))))
     (- (error command))))
+
 
 (require 'ansi-color)
 
