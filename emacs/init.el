@@ -59,7 +59,6 @@
 (add-hook 'before-save-hook 'whitespace-cleanup)
 (add-hook 'before-save-hook (lambda () (delete-trailing-whitespace)))
 
-
 (setq backup-directory-alist '(("." . "~/.emacs.d/emacs-saves")))
 
 ;; Get info windows to open in a nice way...
@@ -93,6 +92,14 @@ COMMAND is a 'windmove' command."
       (intern (elt (split-string command) 1))))
     (- (error command))))
 
+(require 'ansi-color)
+
+(defun my/ansi-colorize-buffer ()
+  (let ((buffer-read-only nil))
+    (ansi-color-apply-on-region (point-min) (point-max))))
+
+(add-hook 'compilation-filter-hook 'my/ansi-colorize-buffer)
+
 (require 'use-package)
 
 
@@ -123,6 +130,10 @@ COMMAND is a 'windmove' command."
   ((evil-mode) . 'mfs/evil-hook)
   :config
   (evil-mode t)
+  (evil-global-set-key 'motion (kbd "s-l") 'evil-window-right)
+  (evil-global-set-key 'motion (kbd "s-k") 'evil-window-up)
+  (evil-global-set-key 'motion (kbd "s-j") 'evil-window-down)
+  (evil-global-set-key 'motion (kbd "s-h") 'evil-window-left)
   (evil-global-set-key 'motion "j" 'evil-next-line)
   (evil-global-set-key 'motion "k" 'evil-previous-line)
   (define-key evil-normal-state-map (kbd "M-.") nil)
@@ -203,6 +214,13 @@ COMMAND is a 'windmove' command."
    ;; exit ivy selection with current text ignoring canidates
    ("C-<return>" . (lambda () (interactive) (ivy-alt-done t)))))
 
+(use-package geiser-guile)
+
+(use-package geiser
+  :hook ((geiser-repl-mode) . 'company-mode)
+  :config
+  (setq-default geiser-guile-load-path '("~/guix"
+					 "~/mfs-guix-channel/")))
 
 (use-package guix
   :hook
@@ -288,7 +306,6 @@ COMMAND is a 'windmove' command."
 (set-mouse-color "white")
 
 (use-package kconfig)
-
 
 (use-package magit)
 
