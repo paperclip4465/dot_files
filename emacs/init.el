@@ -274,9 +274,8 @@ COMMAND is a 'windmove' command."
 						    (arglist-cont-nonempty
 						     c-lineup-gcc-asm-reg
 						     c-lineup-arglist-tabs-only)))))))
-  :config
-  (define-key c-mode-map [(tab)] 'company-complete)
-  (define-key c++-mode-map [(tab)] 'company-complete))
+  :bind
+  (("M-/" . company-complete)))
 
 (use-package evil-org
   :config
