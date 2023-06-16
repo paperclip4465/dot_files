@@ -334,3 +334,17 @@ COMMAND is a 'windmove' command."
     (when (eq major-mode 'compilation-mode)
       (ansi-color-apply-on-region compilation-filter-start (point-max))))
   :hook (compilation-filter . my-colorize-compilation-buffer))
+
+(use-package octave
+  :init
+  (add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))
+  :custom
+  (inferior-octave-startup-args '("-i"
+				  "--line-editing"))
+  :bind
+  (:map octave-mode-map
+	("C-c C-c" . octave-send-block)
+	("C-c C-k" . octave-send-buffer)
+	("C-c C-r" . octave-send-region)))
+
+;;; init.el ends here
