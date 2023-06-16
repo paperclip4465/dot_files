@@ -57,7 +57,6 @@
 (global-unset-key (kbd "C-x C-c"))
 
 (add-hook 'before-save-hook 'whitespace-cleanup)
-(add-hook 'before-save-hook (lambda () (delete-trailing-whitespace)))
 
 (load-theme 'modus-operandi)
 
