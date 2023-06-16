@@ -302,7 +302,6 @@ COMMAND is a 'windmove' command."
 	dashboard-week-agenda t))
 
 (use-package dts-mode
-
   :init
   (add-to-list 'auto-mode-alist '("\\.dtsi*$" . dts-mode)))
 
@@ -325,7 +324,6 @@ COMMAND is a 'windmove' command."
 (use-package magit)
 
 (require 'mfs-lisp)
-
 (require 'mfs-web)
 (require 'mfs-completion)
 (require 'mfs-mail)
