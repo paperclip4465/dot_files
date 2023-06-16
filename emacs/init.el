@@ -65,7 +65,8 @@
 (setq display-buffer-alist '())
 ;; Get info windows to open in a nice way...
 (add-to-list 'display-buffer-alist
-	     '("\\*info\\*"
+	     `(,(rx (or "\\*info\\*"
+			"WoMan"))
 	       (display-buffer-in-side-window)
 	       (side . right)
 	       (slot . 0)
@@ -74,8 +75,8 @@
 		(no-delete-other-windows . t))))
 
 (add-to-list 'display-buffer-alist
-	     `(,(rx (| "\\*Compilation\\*"
-		       "\\*xref\\*"))
+	     `(,(rx (| "compilation"
+		       "xref"))
 	       (display-buffer-reuse-mode-window
 		display-buffer-in-side-window)
 	       (reusable-frames . t)
