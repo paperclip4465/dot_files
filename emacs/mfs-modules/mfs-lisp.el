@@ -1,5 +1,11 @@
 (require 'use-package)
 
+(add-hook 'before-save-hook
+	  (lambda ()
+	    (when (member major-mode '(list scheme-mode lisp-mode emacs-lisp-mode))
+	      (untabify (point-min) (point-max)))))
+
+
 (use-package paredit
   :hook
   (((lisp-mode scheme-mode emacs-lisp-mode) . 'enable-paredit-mode))
@@ -13,8 +19,8 @@
   (autoload 'enable-paredit-mode "paredit"
     "Turn on pseudo-structural editing of Lisp code."
     t))
-
 
+
 ;;; Elisp
 (let ((map emacs-lisp-mode-map))
   (bind-key (kbd "C-c C-c") 'eval-defun map)

@@ -57,18 +57,32 @@
 (global-unset-key (kbd "C-x C-c"))
 
 (add-hook 'before-save-hook 'whitespace-cleanup)
-(add-hook 'before-save-hook (lambda () (delete-trailing-whitespace)))
 
+(load-theme 'modus-operandi)
 
 (setq backup-directory-alist '(("." . "~/.emacs.d/emacs-saves")))
 
+(setq display-buffer-alist '())
 ;; Get info windows to open in a nice way...
 (add-to-list 'display-buffer-alist
-	     '("\\*info\\*"
+	     `(,(rx (or "\\*info\\*"
+			"WoMan"))
 	       (display-buffer-in-side-window)
 	       (side . right)
 	       (slot . 0)
 	       (window-width . 80)
+	       (window-parameters
+		(no-delete-other-windows . t))))
+
+(add-to-list 'display-buffer-alist
+	     `(,(rx (| "compilation"
+		       "xref"))
+	       (display-buffer-reuse-mode-window
+		display-buffer-in-side-window)
+	       (reusable-frames . t)
+	       (side . bottom)
+	       (slot . 0)
+	       (window-height . 20)
 	       (window-parameters
 		(no-delete-other-windows . t))))
 
@@ -92,6 +106,15 @@ COMMAND is a 'windmove' command."
      (windmove-do-window-select
       (intern (elt (split-string command) 1))))
     (- (error command))))
+
+
+(require 'ansi-color)
+
+(defun my/ansi-colorize-buffer ()
+  (let ((buffer-read-only nil))
+    (ansi-color-apply-on-region (point-min) (point-max))))
+
+(add-hook 'compilation-filter-hook 'my/ansi-colorize-buffer)
 
 (require 'use-package)
 
@@ -123,6 +146,10 @@ COMMAND is a 'windmove' command."
   ((evil-mode) . 'mfs/evil-hook)
   :config
   (evil-mode t)
+  (evil-global-set-key 'motion (kbd "s-l") 'evil-window-right)
+  (evil-global-set-key 'motion (kbd "s-k") 'evil-window-up)
+  (evil-global-set-key 'motion (kbd "s-j") 'evil-window-down)
+  (evil-global-set-key 'motion (kbd "s-h") 'evil-window-left)
   (evil-global-set-key 'motion "j" 'evil-next-line)
   (evil-global-set-key 'motion "k" 'evil-previous-line)
   (define-key evil-normal-state-map (kbd "M-.") nil)
@@ -203,6 +230,13 @@ COMMAND is a 'windmove' command."
    ;; exit ivy selection with current text ignoring canidates
    ("C-<return>" . (lambda () (interactive) (ivy-alt-done t)))))
 
+(use-package geiser-guile)
+
+(use-package geiser
+  :hook ((geiser-repl-mode) . 'company-mode)
+  :config
+  (setq-default geiser-guile-load-path '("~/guix"
+					 "~/mfs-guix-channel/")))
 
 (use-package guix
   :hook
@@ -240,9 +274,8 @@ COMMAND is a 'windmove' command."
 						    (arglist-cont-nonempty
 						     c-lineup-gcc-asm-reg
 						     c-lineup-arglist-tabs-only)))))))
-  :config
-  (define-key c-mode-map [(tab)] 'company-complete)
-  (define-key c++-mode-map [(tab)] 'company-complete))
+  :bind
+  (("M-/" . company-complete)))
 
 (use-package evil-org
   :config
@@ -269,7 +302,6 @@ COMMAND is a 'windmove' command."
 	dashboard-week-agenda t))
 
 (use-package dts-mode
-
   :init
   (add-to-list 'auto-mode-alist '("\\.dtsi*$" . dts-mode)))
 
@@ -289,11 +321,9 @@ COMMAND is a 'windmove' command."
 
 (use-package kconfig)
 
-
 (use-package magit)
 
 (require 'mfs-lisp)
-
 (require 'mfs-web)
 (require 'mfs-completion)
 (require 'mfs-mail)
@@ -304,3 +334,17 @@ COMMAND is a 'windmove' command."
     (when (eq major-mode 'compilation-mode)
       (ansi-color-apply-on-region compilation-filter-start (point-max))))
   :hook (compilation-filter . my-colorize-compilation-buffer))
+
+(use-package octave
+  :init
+  (add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))
+  :custom
+  (inferior-octave-startup-args '("-i"
+				  "--line-editing"))
+  :bind
+  (:map octave-mode-map
+	("C-c C-c" . octave-send-block)
+	("C-c C-k" . octave-send-buffer)
+	("C-c C-r" . octave-send-region)))
+
+;;; init.el ends here
