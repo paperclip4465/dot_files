@@ -4,7 +4,7 @@
 
 (server-start)
 
-(load-theme 'modus-vivendi)
+(load-theme 'modus-operandi)
 
 (defvar mfs-home (getenv "HOME")
   "Home environment variable which is not always the same on every computer.")
