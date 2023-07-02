@@ -32,7 +32,7 @@
 (setq calendar-date-style 'iso)
 
 ;; Enable those
-(dolist (c '( narrow-to-region narrow-to-page upcase-region downcase-region))
+(dolist (c '(narrow-to-region narrow-to-page upcase-region downcase-region))
   (put c 'disabled nil))
 
 (put 'overwrite-mode 'disabled t)
@@ -134,7 +134,6 @@ COMMAND is a 'windmove' command."
     (add-to-list 'evil-emacs-state-modes mode)))
 
 (use-package evil
-
   :after company
   :init
   (setq evil-want-integration nil)
@@ -158,7 +157,6 @@ COMMAND is a 'windmove' command."
 
 
 (use-package evil-collection
-
   :after evil
   :custom
   (evil-collection-outline-bind-tab-p nil)
@@ -191,7 +189,6 @@ COMMAND is a 'windmove' command."
   (global-undo-tree-mode))
 
 (use-package projectile
-
   :diminish projectile-mode
   :config (projectile-mode)
   :custom ((projectile-completion-system 'ivy))
