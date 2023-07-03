@@ -1,0 +1,42 @@
+[general]
+accounts = Gmail, Librem
+maxsyncaccounts = 2
+pythonfile = ~/offline-imap.py
+
+[Account Gmail]
+localrepository = local_gmail
+remoterepository = origin_gmail
+autorefresh = 5
+quick = 10
+
+[Account Librem]
+localrepository = local_librem
+remoterepository = origin_librem
+autorefresh = 5
+quick = 10
+
+
+[Repository local_gmail]
+type = Maildir
+localfolders = ~/Mail/Gmail
+
+[Repository origin_gmail]
+type = Gmail
+remoteuser = mitchellschmeisser@gmail.com
+remotepasseval = mailpasswd("gmail")
+folderfilter = lambda foldername: foldername not in ['[Gmail]/All Mail', '[Gmail]/Important']
+nametrans = lambda foldername: re.sub('^[Gmail]/', '', foldername)
+sslcacertfile = /etc/ssl/certs/ca-certificates.crt
+
+[Repository local_librem]
+type = Maildir
+localfolders = ~/Mail/librem.one
+
+[Repository origin_librem]
+type = IMAP
+remotehost = imap.librem.one
+remoteport = 993
+remoteuser = mitchellschmeisser@librem.one
+remotepasseval = mailpasswd("librem.one")
+sslcacertfile = /etc/ssl/certs/ca-certificates.crt
+ssl = yes
