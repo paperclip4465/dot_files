@@ -101,29 +101,40 @@
   ((evil-mode) . 'mfs/evil-hook)
   :config
   (evil-mode t)
-  (evil-global-set-key 'motion (kbd "s-l") 'evil-window-right)
-  (evil-global-set-key 'motion (kbd "s-k") 'evil-window-up)
-  (evil-global-set-key 'motion (kbd "s-j") 'evil-window-down)
-  (evil-global-set-key 'motion (kbd "s-h") 'evil-window-left)
   (evil-global-set-key 'motion "j" 'evil-next-line)
   (evil-global-set-key 'motion "k" 'evil-previous-line)
   (define-key evil-normal-state-map (kbd "M-.") nil)
   (evil-set-initial-state 'messages-buffer-mode 'normal)
   (evil-set-initial-state 'dashboard-mode 'normal))
 
-
 (use-package evil-collection
   :after evil
   :custom
   (evil-collection-outline-bind-tab-p nil)
   :config
+  (setq evil-collection-mode-list
+	(filter (lambda (x)
+		  (not (member x
+			       '(mu4e mu4e-conversation))))
+		evil-collection-mode-list))
   (evil-collection-init))
 
 (use-package org
   :init
   (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
   (setq org-cite-global-bibliography
-	`(,(mfs-emacs-path "org-cite/cite.bib")))
+	`(,(locate-user-emacs-file "org-cite/cite.bib")))
+  :bind
+  (("C-c l" . org-store-link)
+   ("C-c a" . org-agenda)
+   ("C-c C" . org-capture)
+   :map org-mode-map
+   ("C-c C-j" . org-next-visible-heading)
+   ("C-c C-k" . org-previous-visible-heading)
+   ("M-l" . org-metaright)
+   ("M-h" . org-metaleft)
+   ("M-k" . org-metaup)
+   ("M-j" . org-metadown))
   :config
   (org-babel-do-load-languages
    'org-babel-load-languages
