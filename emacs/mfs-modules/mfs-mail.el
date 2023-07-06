@@ -35,4 +35,29 @@
 ; NO 'passive
 (setq gnus-use-cache t)
 
+;;;
+;;; mu4e
+
+(use-package mu4e
+  :custom
+  (mu4e-attachment-dir (mfs-home-path "/Mail/attachments")))
+
+;;;
+;;; Elfeed
+
+(defvar mfs-elfeed-command-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "r") #'elfeed-update)))
+
+(use-package elfeed
+  :bind
+  (("C-x w" . elfeed))
+  :config
+  (setq elfeed-feeds
+	'("https://guix.gnu.org/feeds/blog.atom"
+	  "https://zipcpu.com/feed.xml"
+	  "https://protesilaos.com/books.xml"
+	  "https://protesilaos.com/codelog.xml"
+	  "https://hnrss.org/best.atom")))
+
 (provide 'mfs-mail)
