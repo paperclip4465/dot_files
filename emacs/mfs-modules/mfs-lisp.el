@@ -1,9 +1,10 @@
 (require 'use-package)
 
-(add-hook 'before-save-hook
-	  (lambda ()
-	    (when (member major-mode '(list scheme-mode lisp-mode emacs-lisp-mode))
-	      (untabify (point-min) (point-max)))))
+(mapcar (lambda (x)
+	  (add-hook x (lambda () (indent-tabs-mode nil))))
+	'(scheme-mode-hook
+	  lisp-mode-hook
+	  emacs-lisp-mode-hook))
 
 
 (use-package paredit
