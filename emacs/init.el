@@ -200,16 +200,14 @@
   :hook ((geiser-repl-mode) . 'company-mode)
   :config
   (setq-default geiser-guile-load-path '("~/guix"
-					 "~/mfs-guix-channel/")))
+					 "~/nonguix"
+					 "~/mfs-guix-channel")))
 
 (use-package guix
   :hook
   ((shell-mode) . 'guix-build-log-minor-mode)
   :bind
-  (("C-c g" . guix-popup))
-  :config
-  (require 'emacs-guix)
-  (guix-eval-in-repl "(use-modules (emacs-guix packages))"))
+  (("C-c g" . guix-popup)))
 
 (use-package company
   :hook ((prog-mode) . 'company-mode)
