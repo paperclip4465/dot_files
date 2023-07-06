@@ -1,4 +1,16 @@
 ;;;###autoload
+(defun filter (pred lst &optional acc)
+  "Return a new list containing only the elements of LST
+which satisfy PRED."
+  (if (null lst)
+      (reverse acc)
+    (filter pred
+	    (cdr lst)
+	    (if (funcall pred (car lst))
+		(cons (car lst) acc)
+	      acc))))
+
+;;;###autoload
 (defun iota (count &optional start step)
   "Return a list containing COUNT numbers, starting from START
 and adding STEP each time.  The default START is 0, the default
@@ -15,4 +27,4 @@ STEP is 1"
       (setq counter (1+ counter)))
     (reverse list)))
 
-(provide 'iota)
+(provide 'mfs-util)
