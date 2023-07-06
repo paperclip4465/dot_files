@@ -13,9 +13,6 @@
   "Return the absolute filepath of FILE, a file located in $HOME."
   (concat mfs-home "/" file))
 
-(defun mfs-emacs-path (file)
-  "Return absolute path of FILE in 'user-emacs-directory'."
-  (concat user-emacs-directory "/" file))
 
 ;; Personal Information
 (setq user-full-name "Mitchell Schmeisser")
