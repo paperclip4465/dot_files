@@ -142,7 +142,13 @@
      (scheme . t)))
   (setq org-todo-keywords
 	'((sequence "TODO" "NEXT" "IN-PROGRESS" "|" "DONE")))
-  (setq org-agenda-files '("~/org/")))
+  (setq org-agenda-files '("~/org"))
+  (setq org-default-notes-file (concat org-directory "/notes.org"))
+  (setq org-capture-templates
+	'(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
+	   "* TODO %?\n  %i\n  %a")
+	  ("j" "Journal" entry (file+datetree "~/org/journal.org")
+	   "* %?\nEntered on %U\n  %i\n  %a"))))
 
 (use-package which-key
   :config
