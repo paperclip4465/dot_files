@@ -19,9 +19,11 @@ while getopts ":hdl" opt; do
 	    ;;
 	d)
 	    echo $LAYOUT_DIR
+	    exit 0;
 	    ;;
 	\?)
 	    echo "Invalid option: -$OPTARG" >&2
+	    usage
 	    ;;
     esac
 done
