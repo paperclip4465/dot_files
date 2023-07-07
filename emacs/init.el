@@ -57,7 +57,7 @@
 
 (load-theme 'modus-operandi)
 
-(setq backup-directory-alist '(("." . (locate-user-emacs-file "emacs-saves"))))
+(setq backup-directory-alist '(("." .  "~/.emacs.d/emacs-saves")))
 
 (require 'mfs-util)
 
