@@ -45,19 +45,15 @@
 ;;;
 ;;; Elfeed
 
-(defvar mfs-elfeed-command-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "r") #'elfeed-update)))
-
 (use-package elfeed
-  :bind
-  (("C-x w" . elfeed))
-  :config
+  :init
   (setq elfeed-feeds
 	'("https://guix.gnu.org/feeds/blog.atom"
 	  "https://zipcpu.com/feed.xml"
 	  "https://protesilaos.com/books.xml"
 	  "https://protesilaos.com/codelog.xml"
-	  "https://hnrss.org/best.atom")))
+	  "https://hnrss.org/best.atom"))
+  :bind
+  (("C-x w" . elfeed)))
 
 (provide 'mfs-mail)
