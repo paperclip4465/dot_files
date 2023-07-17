@@ -2,12 +2,13 @@
 
 ;; Get info/man windows to open in a nice way...
 (add-to-list 'display-buffer-alist
-	     `(,(rx (or "\\*info\\*"
+	     `(,(rx (or "*info*"
+			"*Help*"
 			"WoMan"))
 	       (display-buffer-in-side-window)
 	       (side . right)
 	       (slot . 0)
-	       (window-width . 80)
+	       (window-width . 100)
 	       (window-parameters
 		(no-delete-other-windows . t))))
 
@@ -31,6 +32,12 @@
 		       "*Occur*"))
 	       display-buffer-reuse-window
 	       (inhibit-same-window . nil)))
+
+;; Make magit-revision windows split horizontally and open below
+(add-to-list 'display-buffer-alist
+	     `(,(rx (| "magit-revision"))
+	       display-buffer-below-selected
+	       (window-height . 100)))
 
 (require 'windmove)
 
