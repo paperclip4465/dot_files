@@ -313,4 +313,13 @@
 	("C-c C-k" . octave-send-buffer)
 	("C-c C-r" . octave-send-region)))
 
+(use-package epa
+  :bind
+  (:map epa-key-list-mode-map
+   ("<return>" . #'epa-show-key)))
+
+(use-package pinentry
+  :config
+  (setq epa-pinentry-mode 'loopback)
+  (pinentry-start))
 ;;; init.el ends here
