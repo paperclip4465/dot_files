@@ -36,7 +36,8 @@
 
 (dolist (path '("mfs-lisp" "mfs-modules"))
   (add-to-list 'load-path (locate-user-emacs-file path)))
-(setq custom-file (make-temp-file "emacs-custom-"))
+
+(setq custom-file (locate-user-emacs-file "emacs-custom"))
 
 (add-hook 'prog-mode-hook
 	  (lambda () (interactive)
