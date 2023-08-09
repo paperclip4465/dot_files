@@ -35,6 +35,4 @@ If PREFIX is given make NAME an array which contains PIN(s)."
       (make-pin-array name pin)
     (insert  (format "set_property PACKAGE_PIN %s [get_ports %s]\n" pin name))))
 
-(add-to-list 'auto-mode-alist '("\\.xdc$" . xdc-mode))
-
 (provide 'xdc)

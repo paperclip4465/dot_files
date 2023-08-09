@@ -322,4 +322,8 @@
   :config
   (setq epa-pinentry-mode 'loopback)
   (pinentry-start))
+
+(use-package xdc
+  :config
+  (add-to-list 'auto-mode-alist '("\\.xdc$" . xdc-mode)))
 ;;; init.el ends here
