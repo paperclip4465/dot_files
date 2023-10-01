@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t; -*-
 ;;; Init.el --- emacs start up file
 ;;; Commentary:
 ;;; Code:
