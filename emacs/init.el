@@ -127,8 +127,6 @@
    ("C-c a" . org-agenda)
    ("C-c C" . org-capture)
    :map org-mode-map
-   ("C-c C-j" . org-next-visible-heading)
-   ("C-c C-k" . org-previous-visible-heading)
    ("M-l" . org-metaright)
    ("M-h" . org-metaleft)
    ("M-k" . org-metaup)
