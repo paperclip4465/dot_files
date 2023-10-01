@@ -140,13 +140,7 @@
      (scheme . t)))
   (setq org-todo-keywords
 	'((sequence "TODO" "NEXT" "IN-PROGRESS" "|" "DONE")))
-  (setq org-agenda-files '("~/org"))
-  (setq org-default-notes-file (concat org-directory "/notes.org"))
-  (setq org-capture-templates
-	'(("t" "Todo" entry (file+headline "~/org/gtd.org" "Tasks")
-	   "* TODO %?\n  %i\n  %a")
-	  ("j" "Journal" entry (file+datetree "~/org/journal.org")
-	   "* %?\nEntered on %U\n  %i\n  %a"))))
+  (setq org-default-notes-file (concat org-directory "/notes.org")))
 
 (use-package which-key
   :config
@@ -252,12 +246,114 @@
 
 (use-package org-roam
   :init (setq org-roam-v2-ack t)
-  :custom (org-roam-directory "~/RoamNotes")
+  :custom (org-roam-directory "~/roam-notes")
   :bind
   (("C-c n l" . org-roam-buffer-toggle)
    ("C-c n f" . org-roam-node-find)
-   ("C-c n i" . org-roam-node-insert))
-  :config (org-roam-setup))
+   ("C-c n i" . org-roam-node-insert)
+   ("C-c n I" . org-roam-insert-immediate)
+   ("C-c n p" . org-roam-find-project)
+   ("C-c n P" . org-roam-capture-project)
+   ("C-c n c" . org-roam-capture)
+   :map org-mode-map
+   ("C-M-i" . completion-at-point))
+  :config
+  (org-roam-setup)
+
+  (defun org-roam-insert-immediate (arg &rest args)
+    "Insert a new org-roam-node link but do not open the note for editing."
+    (interactive "P")
+    (let ((args (cons arg args))
+	  (org-roam-capture-templates (list (append (car org-roam-capture-templates)
+						    '(:immediate-finish t)))))
+      (apply #'org-roam-node-insert args)))
+
+  (defun org-roam-tag-filter (tag)
+    "Create a lambda which returns true when node contains TAG."
+    (lambda (node)
+      (member tag (org-roam-node-tags node))))
+
+  (defun org-roam-list-notes-by-tag (tag)
+    "Return a list of org roam notes containing TAG"
+    (mapcar #'org-roam-node-file
+	    (seq-filter (org-roam-tag-filter tag)
+			(org-roam-node-list))))
+
+  (defun org-roam-refresh-agenda-list ()
+    (interactive)
+    (setq org-agenda-files (org-roam-list-notes-by-tag "project")))
+
+  (defun org-roam-project-finalize-hook ()
+    "Adds the captured project file to `org-agenda-files' if the
+    capture was not aborted."
+    ;; Remove hook since it was added temporarily
+    (remove-hook 'org-capture-after-finalize-hook #'org-roam-project-finalize-hook)
+    (unless org-note-abort
+      (with-current-buffer (org-capture-get :buffer)
+	(add-to-list 'org-agenda-files (buffer-file-name)))))
+
+  (defvar project-head
+    ":PROPERTIES:
+:PROJECT-NUMBER: %^{PROJECT-NUMBER}
+:SPONSOR: %^{SPONSOR}
+:END:
+#+title: ${title}
+#+category: ${title}
+#+filetags: :project:")
+
+  (defvar mfs-project-template
+    `("p" "project" plain
+      "* Goals\n\n%?\n\n* Tasks\n\n** TODO Add initial tasks.\n\n* Dates\n\n"
+      :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" ,project-head)
+      :unnarrowed t
+      :immediate-finish t))
+
+  (defun org-roam-find-project ()
+    (interactive)
+    ;; add the project file to the agenda after capture is finished
+    (add-hook 'org-capture-after-finalize-hook #'org-roam-project-finalize-hook)
+
+    ;; select project file to open
+    (let ((tag  "project"))
+      (org-roam-node-find
+       nil nil
+       (org-roam-tag-filter tag))))
+
+  (defun org-roam-capture-project ()
+    (interactive)
+    ;; add the project file to the agenda after capture is finished
+    (add-hook 'org-capture-after-finalize-hook #'org-roam-project-finalize-hook)
+    (let ((tag "project"))
+      (org-roam-capture- :node (org-roam-node-read
+				nil
+				(org-roam-tag-filter "Project"))
+			 :templates `(("m" "meeting" entry "** %?\nSCHEDULED: %^{Date}T\n\n"
+				       :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+							      ,project-head
+							      ("Meetings")))
+				      ("n" "note" entry "** %?"
+				       :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+							      ,project-head
+							      ("Notes")))
+				      ("t" "todo" entry "** TODO %?"
+				       :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+							      ,project-head
+							      ("Tasks")))))))
+
+  (setq org-roam-capture-templates
+	`(("d" "default" plain
+	   "%?"
+	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+	   :unnarrowed t
+	   :immediate-finish t)
+	  ("h" "hardware" plain
+	   "* Overview\n\n%?\n\n* Notes\n\n* References\n\n* Projects\n\n"
+	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+			      "#+title: ${title}\n#+filetags: :hardware:")
+	   :unnarrowed t
+	   :immediate-finish t)
+	  ,mfs-project-template))
+  (require 'org-roam-dailies))
 
 (use-package dashboard
   :config
