@@ -224,6 +224,7 @@
 
 (use-package cc-mode
   :hook ((c-mode . (lambda ()
+		     (ggtags-mode 1)
 		     (setq indent-tabs-mode t
 			   show-trailing-whitespace t)
 		     (c-set-style "linux-tabs-only")))
