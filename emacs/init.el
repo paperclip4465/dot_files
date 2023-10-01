@@ -412,14 +412,21 @@
 (use-package epa
   :bind
   (:map epa-key-list-mode-map
-   ("<return>" . #'epa-show-key)))
+	("<return>" . #'epa-show-key)))
 
 (use-package pinentry
   :config
   (setq epa-pinentry-mode 'loopback)
   (pinentry-start))
 
+(use-package direnv
+  :custom
+  (direnv-mode t))
+
 (use-package xdc
   :config
   (add-to-list 'auto-mode-alist '("\\.xdc$" . xdc-mode)))
+
+(use-package eglot)
+
 ;;; init.el ends here
