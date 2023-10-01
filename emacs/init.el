@@ -195,11 +195,7 @@
 (use-package geiser-guile)
 
 (use-package geiser
-  :hook ((geiser-repl-mode) . 'company-mode)
-  :config
-  (setq-default geiser-guile-load-path '("~/guix"
-					 "~/nonguix"
-					 "~/mfs-guix-channel")))
+  :hook ((geiser-repl-mode) . 'company-mode))
 
 (use-package guix
   :hook
