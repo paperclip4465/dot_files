@@ -261,7 +261,7 @@
    ("C-c n I" . org-roam-insert-immediate)
    ("C-c n p" . org-roam-find-project)
    ("C-c n P" . org-roam-capture-project)
-   ("C-c n c" . org-roam-capture)
+   ("C-c n d" . org-roam-dailies-capture-today)
    :map org-mode-map
    ("C-M-i" . completion-at-point))
   :config
@@ -331,21 +331,22 @@
     ;; add the project file to the agenda after capture is finished
     (add-hook 'org-capture-after-finalize-hook #'org-roam-project-finalize-hook)
     (let ((tag "project"))
-      (org-roam-capture- :node (org-roam-node-read
-				nil
-				(org-roam-tag-filter "Project"))
-			 :templates `(("m" "meeting" entry "** %?\nSCHEDULED: %^{Date}T\n\n"
-				       :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
-							      ,project-head
-							      ("Meetings")))
-				      ("n" "note" entry "** %?"
-				       :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
-							      ,project-head
-							      ("Notes")))
-				      ("t" "todo" entry "** TODO %?"
-				       :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
-							      ,project-head
-							      ("Tasks")))))))
+      (org-roam-capture-
+       :node (org-roam-node-read
+	      nil
+	      (org-roam-tag-filter tag))
+       :templates `(("m" "meeting" entry "** %?\nSCHEDULED: %^{Date}T\n\n"
+		     :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+					    ,project-head
+					    ("Meetings")))
+		    ("n" "note" entry "\n** %?"
+		     :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+					    ,project-head
+					    ("Notes")))
+		    ("t" "todo" entry "** TODO %?"
+		     :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+					    ,project-head
+					    ("Tasks")))))))
 
   (setq org-roam-capture-templates
 	`(("d" "default" plain
@@ -360,7 +361,8 @@
 	   :unnarrowed t
 	   :immediate-finish t)
 	  ,mfs-project-template))
-  (require 'org-roam-dailies))
+  (require 'org-roam-dailies)
+  (org-roam-refresh-agenda-list))
 
 (use-package dashboard
   :config
