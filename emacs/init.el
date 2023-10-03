@@ -132,13 +132,24 @@
    ("M-h" . org-metaleft)
    ("M-k" . org-metaup)
    ("M-j" . org-metadown))
+  :custom
+  (org-format-latex-options
+   '( :foreground default
+      :background default
+      :scale 1.7
+      :html-foreground "Black"
+      :html-background "Transparent"
+      :html-scale 1.0
+      :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
   :config
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((shell . t)
      (scheme . t)))
   (setq org-todo-keywords
-	'((sequence "TODO" "NEXT" "IN-PROGRESS" "|" "DONE")))
+	'((sequence "ON-HOLD" "TODO" "IN-PROGRESS" "|" "DONE")
+	  (sequence "REPORT" "BUG" "KNOWNCAUSE" "|" "FIXED")))
+
   (setq org-default-notes-file (concat org-directory "/notes.org")))
 
 (use-package which-key
