@@ -450,4 +450,9 @@
 
 (use-package eglot)
 
+(use-package autoconf
+  :bind
+  ( :map autoconf-mode-map
+    ("C-c C-c" . comment-region)))
+
 ;;; init.el ends here
