@@ -455,4 +455,8 @@
   ( :map autoconf-mode-map
     ("C-c C-c" . comment-region)))
 
+(use-package org-jira
+  :config
+  (setq jiralib-url "https://jira.arl.psu.edu"))
+
 ;;; init.el ends here
