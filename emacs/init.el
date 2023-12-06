@@ -171,17 +171,30 @@
   :config
   (global-undo-tree-mode))
 
-(use-package projectile
-  :diminish projectile-mode
-  :config (projectile-mode)
-  :custom ((projectile-completion-system 'ivy))
-  :bind-keymap ("C-c p" . projectile-command-map)
+(use-package project
   :init
-  (when (file-directory-p "~/projects")
-    (setq projectile-project-search-path '("~/projects")))
-  (setq projectile-switch-project-action #'projectile-dired)
-  (setq projectile-enable-caching t))
+  (defun project-envrc (dir)
+    "Switch to project .envrc"
+    (interactive)
+    (find-file (concat  (project-root (project-current))
+			".envrc")))
 
+  (defvar project-profiles-dir
+    (concat (getenv "HOME") "/projects/.project-profiles"))
+
+  (defun project-set-guix-environment (dir)
+    "Sets `guix-current-profile' to `project-profiles-dir'/project-name."
+    (message "switching profiles!")
+    (setq guix-current-profile (concat project-profiles-dir
+				       "/"
+				       (project-name (project-current)))))
+
+  :config
+  ;; Switch active Guix profile when project is switched.
+  (add-function :after (symbol-function 'project-switch-project)
+	      #'project-set-guix-environment)
+  :bind
+  (("C-x E" . project-envrc)))
 
 (use-package rainbow-delimiters
   :hook ((prog-mode lisp-mode emacs-lisp-mode) . 'rainbow-delimiters-mode)
