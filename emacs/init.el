@@ -250,7 +250,11 @@
 						     c-lineup-gcc-asm-reg
 						     c-lineup-arglist-tabs-only)))))))
   :bind
-  (("M-/" . company-complete)))
+  (("M-/" . company-complete)
+   :map c-mode-map
+   ("M-n" . flymake-goto-next-error)
+   ("M-p" . flymake-goto-previous-error)
+   ("C-c C-z" . ff-find-other-file)))
 
 (use-package evil-org
   :config
