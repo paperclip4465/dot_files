@@ -124,6 +124,12 @@
   (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
   (setq org-cite-global-bibliography
 	`(,(locate-user-emacs-file "org-cite/cite.bib")))
+
+  (defun mfs/org-insert-src-block ()
+    (interactive)
+    (insert "#+begin_src\n\n#+end_src\n")
+    (forward-line -1))
+
   :bind
   (("C-c l" . org-store-link)
    ("C-c a" . org-agenda)
@@ -132,7 +138,8 @@
    ("M-l" . org-metaright)
    ("M-h" . org-metaleft)
    ("M-k" . org-metaup)
-   ("M-j" . org-metadown))
+   ("M-j" . org-metadown)
+   ("C-c s" . mfs/org-insert-src-block))
   :custom
   (org-format-latex-options
    '( :foreground default
