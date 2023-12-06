@@ -366,6 +366,11 @@
 	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
 	   :unnarrowed t
 	   :immediate-finish t)
+	  ("M" "math" plain "* %?"
+	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+			      "#+title: ${title}\n#+startup: latexpreview\n#+filetags: :math:\n\n")
+	   :unnarrowed t
+	   :immediate-finish t)
 	  ("h" "hardware" plain
 	   "* Overview\n\n%?\n\n* Notes\n\n* References\n\n* Projects\n\n"
 	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
