@@ -39,6 +39,7 @@
   (add-to-list 'load-path (locate-user-emacs-file path)))
 
 (setq custom-file (locate-user-emacs-file "emacs-custom"))
+(setq enable-recursive-minibuffers t)
 
 (add-hook 'prog-mode-hook
 	  (lambda () (interactive)
