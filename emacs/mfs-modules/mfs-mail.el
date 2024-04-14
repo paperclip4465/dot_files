@@ -40,12 +40,13 @@
 
 (use-package mu4e
   :bind
-  (("C-c m" . mu4e))
+  (("C-c m" . mu4e)
+   ("C-x m" . mu4e-compose-new))
   :custom
   (mu4e-attachment-dir (mfs-home-path "/Mail/attachments"))
   (mu4e-bookmarks
    '(( :name  "Unread messages"
-       :query "flag:unread AND NOT flag:trashed"
+       :query "flag:unread AND NOT flag:trashed AND NOT unsubscribe"
        :key ?u)
      ( :name "Today's messages"
        :query "date:today..now"
@@ -56,9 +57,17 @@
      ( :name "librem"
        :key ?l
        :query "librem.one")
-     ( :name "jobs"
+     ( :name "junk"
+       :hide-unread t
        :key ?j
-       :query "ZipRecruiter"))))
+       :query "unsubscribe AND NOT flag:trashed")))
+  :config
+  (require 'mu4e-org)
+  (setq mu4e-change-filenames-when-moving t)
+
+  (setq mu4e-update-interval 60)
+  (setq mu4e-get-mail-command "offlineimap -c ~/projects/dot_files/mail/offlineimaprc")
+  (setq message-send-mail-function 'smtpmail-send-it))
 
 ;;;
 ;;; Elfeed
