@@ -55,10 +55,7 @@
        :query "ayd")
      ( :name "librem"
        :key ?l
-       :query "librem.one")
-     ( :name "jobs"
-       :key ?j
-       :query "ZipRecruiter"))))
+       :query "librem.one"))))
 
 ;;;
 ;;; Elfeed
