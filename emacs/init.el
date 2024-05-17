@@ -188,15 +188,47 @@
     "Sets `guix-current-profile' to `project-profiles-dir'/project-name."
     (message "switching profiles!")
     (setq guix-current-profile (concat project-profiles-dir
-				       "/"
-				       (project-name (project-current)))))
+                                       "/"
+                                       (project-name (project-current)))))
 
+  :bind-keymap ("C-c p" . projectile-command-map)
   :config
   ;; Switch active Guix profile when project is switched.
-  (add-function :after (symbol-function 'project-switch-project)
-	      #'project-set-guix-environment)
+  (add-function :after (symbol-function 'projectile-switch-project)
+                #'project-set-guix-environment)
+
+  (defun find-project-file (files)
+    (if (null files)
+        '()
+      (progn
+        (message "Looking for: %s" (car files))
+        (if (file-exists-p (car files))
+            (car files)
+          (find-project-file (cdr files))))))
+
+  (defun my-projectile-switch-project-action ()
+    (interactive)
+    ;; test for some typical files in my projects
+    (ignore-errors
+      (let ((file (find-project-file
+                   (apply #'append
+                          (mapcar (lambda (ext)
+                                    (mapcar (lambda (name)
+                                              (concat name ext))
+                                            '("Readme" "README")))
+                                  '("" ".org" ".md"))))))
+        (when (and (not (null file))
+                   (file-exists-p file))
+          (find-file-other-window file))))
+    ;; now run magit
+    (if (vc-git-responsible-p default-directory)
+        (magit-status)))
+
+  (setq projectile-switch-project-action
+        #'my-projectile-switch-project-action)
+
   :bind
-  (("C-x E" . project-envrc)))
+  (("C-x p E" . project-envrc)))
 
 (use-package rainbow-delimiters
   :hook ((prog-mode lisp-mode emacs-lisp-mode) . 'rainbow-delimiters-mode)
