@@ -427,6 +427,25 @@
 (use-package magit)
 
 (require 'mfs-lisp)
+
+;; use spaces instead of tabs for lisp files
+(mapcar (lambda (x)
+          (add-hook x (lambda () (indent-tabs-mode -1))))
+        '(scheme-mode-hook
+          lisp-mode-hook
+          emacs-lisp-mode-hook))
+
+(mapc (lambda (thing)
+        (put (car thing)
+             'scheme-indent-function
+             (cdr thing)))
+      '((for-each-test . 1)
+        (with-test-bundle . 1)
+        (with-fs-test-bundle . 1)
+        (with-ellipsis . 1)
+        (set-record-type-printer! . 1)
+        (define-test . 1)))
+
 (require 'mfs-web)
 (require 'mfs-completion)
 (require 'mfs-mail)
