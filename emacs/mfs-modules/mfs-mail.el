@@ -48,11 +48,13 @@
 (use-package elfeed
   :init
   (setq elfeed-feeds
-	'("https://guix.gnu.org/feeds/blog.atom"
-	  "https://zipcpu.com/feed.xml"
-	  "https://protesilaos.com/books.xml"
-	  "https://protesilaos.com/codelog.xml"
-	  "https://hnrss.org/best.atom"))
+        '("https://guix.gnu.org/feeds/blog.atom"
+          "https://zipcpu.com/feed.xml"
+          "https://protesilaos.com/books.xml"
+          "https://protesilaos.com/codelog.xml"
+          "https://hnrss.org/best.atom"))
+  :custom
+  (elfeed-curl-extra-arguments .  '("-k"))
   :bind
   (("C-x w" . elfeed)))
 
