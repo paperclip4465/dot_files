@@ -152,8 +152,10 @@
   :config
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((shell . t)
-     (scheme . t)))
+   '((octave . t)
+     (python . t)
+     (scheme . t)
+     (shell . t)))
   (setq org-todo-keywords
 	'((sequence "ON-HOLD" "TODO" "IN-PROGRESS" "|" "DONE")
 	  (sequence "REPORT" "BUG" "KNOWNCAUSE" "|" "FIXED")))
