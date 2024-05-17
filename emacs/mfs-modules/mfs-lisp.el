@@ -45,8 +45,26 @@
 
 ;;; Scheme
 
+(defvar project-geiser-proc nil)
+
 (use-package geiser
-  :hook ((geiser-repl-mode) . 'company-mode))
+  :init
+  :hook ((geiser-repl-mode) . 'company-mode)
+  :bind
+  (("C-C C-Z" . (lambda ()
+                  (interactive)
+                  (when (process-live-p project-geiser-proc)
+                    (stop-process project-geiser-proc))
+                  (setf project-geiser-proc
+                        (projectile-run-async-shell-command-in-root
+                         "./pre-inst-env guile --listen"))
+                  (geiser-connect
+                   'guile
+                   "localhost"
+                   37146))))
+  :config
+  (setq geiser-guile-load-path '("/home/mfs5173/guix"
+                                 "/home/mfs5173/nonguix")))
 
 (use-package geiser-guile)
 

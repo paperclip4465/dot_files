@@ -257,11 +257,6 @@
    ;; exit ivy selection with current text ignoring canidates
    ("C-<return>" . (lambda () (interactive) (ivy-alt-done t)))))
 
-(use-package geiser-guile)
-
-(use-package geiser
-  :hook ((geiser-repl-mode) . 'company-mode))
-
 (use-package guix
   :hook
   ((shell-mode) . 'guix-build-log-minor-mode)
