@@ -173,13 +173,13 @@
   :config
   (global-undo-tree-mode))
 
-(use-package project
+(use-package projectile
   :init
-  (defun project-envrc (dir)
+  (defun project-envrc ()
     "Switch to project .envrc"
     (interactive)
     (find-file (concat  (project-root (project-current))
-			".envrc")))
+                        ".envrc")))
 
   (defvar project-profiles-dir
     (concat (getenv "HOME") "/projects/.project-profiles"))
