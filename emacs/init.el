@@ -42,10 +42,10 @@
 (setq enable-recursive-minibuffers t)
 
 (add-hook 'prog-mode-hook
-	  (lambda () (interactive)
-	    (display-line-numbers-mode 1)
-	    (setq show-trailing-whitespace 1)
-	    (setq display-line-numbers 'relative)))
+          (lambda () (interactive)
+            (display-line-numbers-mode 1)
+            (setq show-trailing-whitespace 1)
+            (setq display-line-numbers 'relative)))
 
 
 (show-paren-mode t)
@@ -78,15 +78,15 @@
 (defun mfs/evil-hook ()
   "Enable evil mode in these additional modes."
   (dolist (mode '(custom-shell
-		  eshell-mode
-		  git-rebase-mode
-		  repl-mode
-		  erc-mode
-		  circe-server-mode
-		  circe-chat-mode
-		  circe-query-mode
-		  sauron-mode
-		  term-mode))
+                  eshell-mode
+                  git-rebase-mode
+                  repl-mode
+                  erc-mode
+                  circe-server-mode
+                  circe-chat-mode
+                  circe-query-mode
+                  sauron-mode
+                  term-mode))
     (add-to-list 'evil-emacs-state-modes mode)))
 
 (use-package evil
@@ -113,17 +113,19 @@
   (evil-collection-outline-bind-tab-p nil)
   :config
   (setq evil-collection-mode-list
-	(filter (lambda (x)
-		  (not (member x
-			       '(mu4e mu4e-conversation))))
-		evil-collection-mode-list))
+        (filter (lambda (x)
+                  (not (member x
+                               '(mu4e mu4e-conversation))))
+                evil-collection-mode-list))
   (evil-collection-init))
 
 (use-package org
+  :hook
+  ((org-mode) . 'flyspell-mode)
   :init
   (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
   (setq org-cite-global-bibliography
-	`(,(locate-user-emacs-file "org-cite/cite.bib")))
+        `(,(locate-user-emacs-file "org-cite/cite.bib")))
 
   (defun mfs/org-insert-src-block ()
     (interactive)
@@ -157,8 +159,8 @@
      (scheme . t)
      (shell . t)))
   (setq org-todo-keywords
-	'((sequence "ON-HOLD" "TODO" "IN-PROGRESS" "|" "DONE")
-	  (sequence "REPORT" "BUG" "KNOWNCAUSE" "|" "FIXED")))
+        '((sequence "ON-HOLD" "TODO" "IN-PROGRESS" "|" "DONE")
+          (sequence "REPORT" "BUG" "KNOWNCAUSE" "|" "FIXED")))
 
   (setq org-default-notes-file (concat org-directory "/notes.org")))
 
@@ -238,7 +240,7 @@
 (use-package ivy
   :config
   (setq ivy-use-virtual-buffers t
-	ivy-count-format "%d/%d ")
+        ivy-count-format "%d/%d ")
   (ivy-mode))
 
 (use-package counsel
@@ -272,25 +274,25 @@
 (defun c-lineup-arglist-tabs-only (ignored)
   "Line up arguments list by tabs, not spaces"
   (let* ((anchor (c-lengelem-pos c-syntactic-element))
-	 (column (c-langelem-2nd-pos c-syntactic-element))
-	 (offset (- (1+ column) anchor))
-	 (steps (floor offset c-basic-offset)))
+         (column (c-langelem-2nd-pos c-syntactic-element))
+         (offset (- (1+ column) anchor))
+         (steps (floor offset c-basic-offset)))
     (* (max steps 1)
        c-basic-offset)))
 
 (use-package cc-mode
   :hook ((c-mode . (lambda ()
-		     (ggtags-mode 1)
-		     (setq indent-tabs-mode t
-			   show-trailing-whitespace t)
-		     (c-set-style "linux-tabs-only")))
-	 (c-mode-common . (lambda ()
-			    ;;; Add kernel style
-			    (c-add-style "linux-tabs-only"
-					 '("linux" (c-offsets-alist
-						    (arglist-cont-nonempty
-						     c-lineup-gcc-asm-reg
-						     c-lineup-arglist-tabs-only)))))))
+                     (ggtags-mode 1)
+                     (setq indent-tabs-mode t
+                           show-trailing-whitespace t)
+                     (c-set-style "linux-tabs-only")))
+         (c-mode-common . (lambda ()
+                            ;;; Add kernel style
+                            (c-add-style "linux-tabs-only"
+                                         '("linux" (c-offsets-alist
+                                                    (arglist-cont-nonempty
+                                                     c-lineup-gcc-asm-reg
+                                                     c-lineup-arglist-tabs-only)))))))
   :bind
   (("M-/" . company-complete)
    :map c-mode-map
@@ -325,8 +327,8 @@
     "Insert a new org-roam-node link but do not open the note for editing."
     (interactive "P")
     (let ((args (cons arg args))
-	  (org-roam-capture-templates (list (append (car org-roam-capture-templates)
-						    '(:immediate-finish t)))))
+          (org-roam-capture-templates (list (append (car org-roam-capture-templates)
+                                                    '(:immediate-finish t)))))
       (apply #'org-roam-node-insert args)))
 
   (defun org-roam-tag-filter (tag)
@@ -337,8 +339,8 @@
   (defun org-roam-list-notes-by-tag (tag)
     "Return a list of org roam notes containing TAG"
     (mapcar #'org-roam-node-file
-	    (seq-filter (org-roam-tag-filter tag)
-			(org-roam-node-list))))
+            (seq-filter (org-roam-tag-filter tag)
+                        (org-roam-node-list))))
 
   (defun org-roam-refresh-agenda-list ()
     (interactive)
@@ -351,7 +353,7 @@
     (remove-hook 'org-capture-after-finalize-hook #'org-roam-project-finalize-hook)
     (unless org-note-abort
       (with-current-buffer (org-capture-get :buffer)
-	(add-to-list 'org-agenda-files (buffer-file-name)))))
+        (add-to-list 'org-agenda-files (buffer-file-name)))))
 
   (defvar project-head
     ":PROPERTIES:
@@ -387,39 +389,43 @@
     (let ((tag "project"))
       (org-roam-capture-
        :node (org-roam-node-read
-	      nil
-	      (org-roam-tag-filter tag))
+              nil
+              (org-roam-tag-filter tag))
        :templates `(("m" "meeting" entry "** %?\nSCHEDULED: %^{Date}T\n\n"
-		     :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
-					    ,project-head
-					    ("Meetings")))
-		    ("n" "note" entry "\n** %?"
-		     :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
-					    ,project-head
-					    ("Notes")))
-		    ("t" "todo" entry "** TODO %?"
-		     :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
-					    ,project-head
-					    ("Tasks")))))))
+                     :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+                                            ,project-head
+                                            ("Meetings")))
+                    ("i" "idea" entry "\n** %?"
+                     :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+                                            ,project-head
+                                            ("Ideas")))
+                    ("n" "note" entry "\n** %?"
+                     :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+                                            ,project-head
+                                            ("Notes")))
+                    ("t" "todo" entry "** TODO %?"
+                     :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+                                            ,project-head
+                                            ("Tasks")))))))
 
   (setq org-roam-capture-templates
-	`(("d" "default" plain
-	   "%?"
-	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-	   :unnarrowed t
-	   :immediate-finish t)
-	  ("M" "math" plain "* %?"
-	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-			      "#+title: ${title}\n#+startup: latexpreview\n#+filetags: :math:\n\n")
-	   :unnarrowed t
-	   :immediate-finish t)
-	  ("h" "hardware" plain
-	   "* Overview\n\n%?\n\n* Notes\n\n* References\n\n* Projects\n\n"
-	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-			      "#+title: ${title}\n#+filetags: :hardware:")
-	   :unnarrowed t
-	   :immediate-finish t)
-	  ,mfs-project-template))
+        `(("d" "default" plain
+           "%?"
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+           :unnarrowed t
+           :immediate-finish t)
+          ("M" "math" plain "* %?"
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                              "#+title: ${title}\n#+startup: latexpreview\n#+filetags: :math:\n\n")
+           :unnarrowed t
+           :immediate-finish t)
+          ("h" "hardware" plain
+           "* Overview\n\n%?\n\n* Notes\n\n* References\n\n* Projects\n\n"
+           :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+                              "#+title: ${title}\n#+filetags: :hardware:")
+           :unnarrowed t
+           :immediate-finish t)
+          ,mfs-project-template))
   (require 'org-roam-dailies)
   (org-roam-refresh-agenda-list))
 
@@ -427,25 +433,25 @@
   :config
   (dashboard-setup-startup-hook)
   (setq dashboard-items '((projects . 10)
-			  (recents . 5)
-			  (agenda . 5))
-	dashboard-week-agenda t))
+                          (recents . 5)
+                          (agenda . 5))
+        dashboard-week-agenda t))
 
 (use-package dts-mode
   :init
   (add-to-list 'auto-mode-alist '("\\.dtsi*$" . dts-mode)))
 
 (add-hook 'dired-load-hook
-	  (lambda () (load "dired-x")))
+          (lambda () (load "dired-x")))
 
 (use-package erc
   :bind
   (("C-c e l" . (lambda () (interactive)
-		  (erc))))
+                  (erc))))
   :config
   (setq erc-compute-server "irc.libera.chat"
-	erc-compute-nick "mitchell"
-	erc-compute-port "6667"))
+        erc-compute-nick "mitchell"
+        erc-compute-port "6667"))
 
 (set-mouse-color "white")
 
@@ -489,17 +495,17 @@
   (add-to-list 'auto-mode-alist '("\\.m$" . octave-mode))
   :custom
   (inferior-octave-startup-args '("-i"
-				  "--line-editing"))
+                                  "--line-editing"))
   :bind
   (:map octave-mode-map
-	("C-c C-c" . octave-send-block)
-	("C-c C-k" . octave-send-buffer)
-	("C-c C-r" . octave-send-region)))
+        ("C-c C-c" . octave-send-block)
+        ("C-c C-k" . octave-send-buffer)
+        ("C-c C-r" . octave-send-region)))
 
 (use-package epa
   :bind
   (:map epa-key-list-mode-map
-	("<return>" . #'epa-show-key)))
+        ("<return>" . #'epa-show-key)))
 
 (use-package pinentry
   :config
@@ -524,5 +530,14 @@
 (use-package org-jira
   :config
   (setq jiralib-url "https://jira.arl.psu.edu"))
+
+(use-package yasnippet
+  :config
+  (yas-global-mode 1))
+
+(defun remote-shell (addr)
+  (interactive "MRemote Address: ")
+  (let ((default-directory (concat "/ssh:" addr ":")))
+    (shell)))
 
 ;;; init.el ends here

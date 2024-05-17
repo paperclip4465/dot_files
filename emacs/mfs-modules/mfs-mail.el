@@ -12,8 +12,8 @@
 
 ;; auto-complete emacs address using bbdb command, optional
 (add-hook 'message-mode-hook
-	  (lambda ()
-	    (flyspell-mode t)))
+          (lambda ()
+            (flyspell-mode t)))
 
 ;;;
 ;;; GNUS
@@ -21,16 +21,16 @@
 (setq gnus-select-method '(nntp "news.gwene.org")) ;; Read feeds/atom through gwene
 (setq epa-file-cache-passphrase-for-symmetric-encryption t)
 (add-to-list 'gnus-secondary-select-methods
-	     '(nnimap "librem.one"
-		      (nnimap-address "imap.librem.one")
-		      (nnimap-server-port 993)
-		      (nnimap-stream ssl)
-		      (nnir-search-engine imap)
-		      (nnmail-expiry-wait 90)))
+             '(nnimap "librem.one"
+                      (nnimap-address "imap.librem.one")
+                      (nnimap-server-port 993)
+                      (nnimap-stream ssl)
+                      (nnir-search-engine imap)
+                      (nnmail-expiry-wait 90)))
 
 (setq gnus-thread-sort-functions
       '(gnus-thread-sort-by-most-recent-date
-	(not gnus-thread-sort-by-number)))
+        (not gnus-thread-sort-by-number)))
 
 ; NO 'passive
 (setq gnus-use-cache t)
