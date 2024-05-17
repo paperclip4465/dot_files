@@ -39,8 +39,26 @@
 ;;; mu4e
 
 (use-package mu4e
+  :bind
+  (("C-c m" . mu4e))
   :custom
-  (mu4e-attachment-dir (mfs-home-path "/Mail/attachments")))
+  (mu4e-attachment-dir (mfs-home-path "/Mail/attachments"))
+  (mu4e-bookmarks
+   '(( :name  "Unread messages"
+       :query "flag:unread AND NOT flag:trashed"
+       :key ?u)
+     ( :name "Today's messages"
+       :query "date:today..now"
+       :key ?t)
+     ( :name "AYD"
+       :key ?a
+       :query "ayd")
+     ( :name "librem"
+       :key ?l
+       :query "librem.one")
+     ( :name "jobs"
+       :key ?j
+       :query "ZipRecruiter"))))
 
 ;;;
 ;;; Elfeed
