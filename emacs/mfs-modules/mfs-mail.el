@@ -93,6 +93,8 @@
 	  "https://protesilaos.com/books.xml"
 	  "https://protesilaos.com/codelog.xml"
 	  "https://hnrss.org/best.atom"))
+  :custom
+  (elfeed-curl-extra-arguments .  '("-k"))
   :bind
   (("C-x w" . elfeed)))
 

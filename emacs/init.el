@@ -39,6 +39,7 @@
   (add-to-list 'load-path (locate-user-emacs-file path)))
 
 (setq custom-file (locate-user-emacs-file "emacs-custom"))
+(setq enable-recursive-minibuffers t)
 
 (add-hook 'prog-mode-hook
 	  (lambda () (interactive)
@@ -119,10 +120,18 @@
   (evil-collection-init))
 
 (use-package org
+  :hook
+  ((org-mode) . 'flyspell-mode)
   :init
   (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
   (setq org-cite-global-bibliography
 	`(,(locate-user-emacs-file "org-cite/cite.bib")))
+
+  (defun mfs/org-insert-src-block ()
+    (interactive)
+    (insert "#+begin_src\n\n#+end_src\n")
+    (forward-line -1))
+
   :bind
   (("C-c l" . org-store-link)
    ("C-c a" . org-agenda)
@@ -131,31 +140,35 @@
    ("M-l" . org-metaright)
    ("M-h" . org-metaleft)
    ("M-k" . org-metaup)
-   ("M-j" . org-metadown))
+   ("M-j" . org-metadown)
+   ("C-c s" . mfs/org-insert-src-block))
   :custom
   (org-plantuml-exec-mode 'plantuml)
+  (org-format-latex-options
+   '( :foreground default
+      :background default
+      :scale 1.7
+      :html-foreground "Black"
+      :html-background "Transparent"
+      :html-scale 1.0
+      :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
   :config
   (setq org-latex-pdf-process '("xelatex -interaction nonstopmode %f"
 				"xelatex -interaction nonstopmode %f"))
 
+  (setq org-default-notes-file (concat org-directory "/notes.org"))
   ;; export cn character
   (setf org-latex-default-packages-alist
 	(remove '("AUTO" "inputenc" t) org-latex-default-packages-alist))
+  (setq org-todo-keywords
+	'((sequence "ON-HOLD" "TODO" "IN-PROGRESS" "|" "DONE")
+	  (sequence "REPORT" "BUG" "KNOWNCAUSE" "|" "FIXED")))
   (org-babel-do-load-languages
    'org-babel-load-languages
-   '((shell . t)
+   '((octave . t)
+     (python . t)
      (scheme . t)
-     (plantuml . t)))
-  (setq org-todo-keywords
-	'((sequence "TODO" "|" "DONE")))
-  (setq org-default-notes-file (concat org-directory "/notes.org"))
-  (setq org-capture-templates
-	`(("m" "Email Workflow")
-	  ("mf" "Follow Up" entry (file+olp "~/org/Mail.org" "Follow Up")
-	   "* TODO %a")
-	  ("mr" "Read Later" entry (file+olp "~/org/Mail.org" "Read Later")
-	   "* TODO %a"))))
-
+     (shell . t))))
 
 (use-package which-key
   :config
@@ -169,16 +182,61 @@
   (global-undo-tree-mode))
 
 (use-package projectile
-  :diminish projectile-mode
-  :config (projectile-mode)
-  :custom ((projectile-completion-system 'ivy))
-  :bind-keymap ("C-c p" . projectile-command-map)
   :init
-  (when (file-directory-p "~/projects")
-    (setq projectile-project-search-path '("~/projects")))
-  (setq projectile-switch-project-action #'projectile-dired)
-  (setq projectile-enable-caching t))
+  (defun project-envrc ()
+    "Switch to project .envrc"
+    (interactive)
+    (find-file (concat  (project-root (project-current))
+			".envrc")))
 
+  (defvar project-profiles-dir
+    (concat (getenv "HOME") "/projects/.project-profiles"))
+
+  (defun project-set-guix-environment (dir)
+    "Sets `guix-current-profile' to `project-profiles-dir'/project-name."
+    (message "switching profiles!")
+    (setq guix-current-profile (concat project-profiles-dir
+				       "/"
+				       (project-name (project-current)))))
+
+  :bind-keymap ("C-c p" . projectile-command-map)
+  :config
+  ;; Switch active Guix profile when project is switched.
+  (add-function :after (symbol-function 'projectile-switch-project)
+		#'project-set-guix-environment)
+
+  (defun find-project-file (files)
+    (if (null files)
+	'()
+      (progn
+	(message "Looking for: %s" (car files))
+	(if (file-exists-p (car files))
+	    (car files)
+	  (find-project-file (cdr files))))))
+
+  (defun my-projectile-switch-project-action ()
+    (interactive)
+    ;; test for some typical files in my projects
+    (ignore-errors
+      (let ((file (find-project-file
+		   (apply #'append
+			  (mapcar (lambda (ext)
+				    (mapcar (lambda (name)
+					      (concat name ext))
+					    '("Readme" "README")))
+				  '("" ".org" ".md"))))))
+	(when (and (not (null file))
+		   (file-exists-p file))
+	  (find-file-other-window file))))
+    ;; now run magit
+    (if (vc-git-responsible-p default-directory)
+	(magit-status)))
+
+  (setq projectile-switch-project-action
+	#'my-projectile-switch-project-action)
+
+  :bind
+  (("C-x p E" . project-envrc)))
 
 (use-package rainbow-delimiters
   :hook ((prog-mode lisp-mode emacs-lisp-mode) . 'rainbow-delimiters-mode)
@@ -206,11 +264,6 @@
    ("C-l" . ivy-done)
    ;; exit ivy selection with current text ignoring canidates
    ("C-<return>" . (lambda () (interactive) (ivy-alt-done t)))))
-
-(use-package geiser-guile)
-
-(use-package geiser
-  :hook ((geiser-repl-mode) . 'company-mode))
 
 (use-package guix
   :hook
@@ -247,9 +300,14 @@
 						     c-lineup-gcc-asm-reg
 						     c-lineup-arglist-tabs-only)))))))
   :bind
-  (("M-/" . company-complete)))
+  (("M-/" . company-complete)
+   :map c-mode-map
+   ("M-n" . flymake-goto-next-error)
+   ("M-p" . flymake-goto-previous-error)
+   ("C-c C-z" . ff-find-other-file)))
 
 (use-package evil-org
+  :after org
   :config
   (evil-org-set-key-theme '(navigation insert textobjects additional calendar))
   (require 'evil-org-agenda)
@@ -257,6 +315,7 @@
   (setq org-agenda-start-on-weekday 0))
 
 (use-package org-roam
+  :after org
   :init (setq org-roam-v2-ack t)
   :custom (org-roam-directory "~/roam-notes")
   :bind
@@ -266,7 +325,7 @@
    ("C-c n I" . org-roam-insert-immediate)
    ("C-c n p" . org-roam-find-project)
    ("C-c n P" . org-roam-capture-project)
-   ("C-c n c" . org-roam-capture)
+   ("C-c n d" . org-roam-dailies-capture-today)
    :map org-mode-map
    ("C-M-i" . completion-at-point))
   :config
@@ -336,26 +395,36 @@
     ;; add the project file to the agenda after capture is finished
     (add-hook 'org-capture-after-finalize-hook #'org-roam-project-finalize-hook)
     (let ((tag "project"))
-      (org-roam-capture- :node (org-roam-node-read
-				nil
-				(org-roam-tag-filter "Project"))
-			 :templates `(("m" "meeting" entry "** %?\nSCHEDULED: %^{Date}T\n\n"
-				       :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
-							      ,project-head
-							      ("Meetings")))
-				      ("n" "note" entry "** %?"
-				       :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
-							      ,project-head
-							      ("Notes")))
-				      ("t" "todo" entry "** TODO %?"
-				       :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
-							      ,project-head
-							      ("Tasks")))))))
+      (org-roam-capture-
+       :node (org-roam-node-read
+	      nil
+	      (org-roam-tag-filter tag))
+       :templates `(("m" "meeting" entry "** %?\nSCHEDULED: %^{Date}T\n\n"
+		     :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+					    ,project-head
+					    ("Meetings")))
+		    ("i" "idea" entry "\n** %?"
+		     :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+					    ,project-head
+					    ("Ideas")))
+		    ("n" "note" entry "\n** %?"
+		     :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+					    ,project-head
+					    ("Notes")))
+		    ("t" "todo" entry "** TODO %?"
+		     :if-new (file+head+olp "%<%Y%m%d%H%M%S>-${slug}.org"
+					    ,project-head
+					    ("Tasks")))))))
 
   (setq org-roam-capture-templates
 	`(("d" "default" plain
 	   "%?"
 	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+	   :unnarrowed t
+	   :immediate-finish t)
+	  ("M" "math" plain "* %?"
+	   :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+			      "#+title: ${title}\n#+startup: latexpreview\n#+filetags: :math:\n\n")
 	   :unnarrowed t
 	   :immediate-finish t)
 	  ("h" "hardware" plain
@@ -365,7 +434,8 @@
 	   :unnarrowed t
 	   :immediate-finish t)
 	  ,mfs-project-template))
-  (require 'org-roam-dailies))
+  (require 'org-roam-dailies)
+  (org-roam-refresh-agenda-list))
 
 (use-package dashboard
   :config
@@ -398,6 +468,25 @@
 (use-package magit)
 
 (require 'mfs-lisp)
+
+;; use spaces instead of tabs for lisp files
+(mapcar (lambda (x)
+	  (add-hook x (lambda () (indent-tabs-mode -1))))
+	'(scheme-mode-hook
+	  lisp-mode-hook
+	  emacs-lisp-mode-hook))
+
+(mapc (lambda (thing)
+	(put (car thing)
+	     'scheme-indent-function
+	     (cdr thing)))
+      '((for-each-test . 1)
+	(with-test-bundle . 1)
+	(with-fs-test-bundle . 1)
+	(with-ellipsis . 1)
+	(set-record-type-printer! . 1)
+	(define-test . 1)))
+
 (require 'mfs-web)
 (require 'mfs-completion)
 (require 'mfs-mail)
@@ -444,4 +533,10 @@
 (use-package calc
   :bind
   ("M-#" . calc-embedded-activate))
+
+(use-package autoconf
+  :bind
+  ( :map autoconf-mode-map
+    ("C-c C-c" . comment-region)))
+
 ;;; init.el ends here
