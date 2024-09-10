@@ -441,4 +441,7 @@
 
 (use-package eglot)
 
+(use-package calc
+  :bind
+  ("M-#" . calc-embedded-activate))
 ;;; init.el ends here
