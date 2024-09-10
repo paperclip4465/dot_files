@@ -311,14 +311,14 @@
 :END:
 #+title: ${title}
 #+category: ${title}
-#+filetags: :project:")
+#+filetags: :project:"
 
-  (defvar mfs-project-template
-    `("p" "project" plain
-      "* Goals\n\n%?\n\n* Tasks\n\n** TODO Add initial tasks.\n\n* Dates\n\n"
-      :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" ,project-head)
-      :unnarrowed t
-      :immediate-finish t))
+    (defvar mfs-project-template
+      `("p" "project" plain
+	"* Goals\n\n%?\n\n* Tasks\n\n** TODO Add initial tasks.\n\n* Dates\n\n"
+	:if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" ,project-head)
+	:unnarrowed t
+	:immediate-finish t)))
 
   (defun org-roam-find-project ()
     (interactive)
