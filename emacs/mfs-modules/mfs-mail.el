@@ -1,42 +1,50 @@
-(defun homep ()
-  (string-match-p user-login-name "mitchell"))
-
-(setq user-mail-address "mitchellschmeisser@librem.one")
-(setq smtpmail-smtp-server "smtp.librem.one")
-(setq smtpmail-servers-requiring-authorization "^.librem\.one")
-
-(setq message-send-mail-function 'smtpmail-send-it
-      smtpmail-default-smtp-server "smtp.librem.one"
-      smtpmail-smtp-service 587
-      smtpmail-local-domain "homepc")
+(setq message-send-mail-function 'smtpmail-send-it)
 
 ;; auto-complete emacs address using bbdb command, optional
 (add-hook 'message-mode-hook
 	  (lambda ()
-	    (flyspell-mode t)))
-
-;;;
-;;; GNUS
-
-(setq gnus-select-method '(nntp "news.gwene.org")) ;; Read feeds/atom through gwene
-(setq epa-file-cache-passphrase-for-symmetric-encryption t)
-(add-to-list 'gnus-secondary-select-methods
-	     '(nnimap "librem.one"
-		      (nnimap-address "imap.librem.one")
-		      (nnimap-server-port 993)
-		      (nnimap-stream ssl)
-		      (nnir-search-engine imap)
-		      (nnmail-expiry-wait 90)))
-
-(setq gnus-thread-sort-functions
-      '(gnus-thread-sort-by-most-recent-date
-	(not gnus-thread-sort-by-number)))
-
-; NO 'passive
-(setq gnus-use-cache t)
+	    (flyspell-mode t)
+	    (company-mode t)))
 
 ;;;
 ;;; mu4e
+
+(defvar mfs-mu4e-contexts
+  `(,(make-mu4e-context
+      :name "HVGC"
+      :enter-func (lambda () (mu4e-message "Entering Happy Valley Go Club context"))
+      :leave-func (lambda () (mu4e-message "Leaving Happy Valley Go Club context"))
+      :match-func (lambda (msg)
+		    (when msg
+		      (or
+		       (mu4e-message-contact-field-matches msg
+			'(:to :from :bcc :cc) "mitchell@happyvalleygo.org"))))
+      :vars '( ( user-mail-address . "mitchell@happyvalleygo.org")
+	       ( user-full-name . "Mitchell Schmeisser")
+	       ( message-user-organization . "Happy Valley Go Club")
+	       ( message-signature . t)
+	       ( message-signature-file . "~/.hvgc-signature")
+	       ( smtpmail-default-smtp-server "smtp.titan.email")
+	       ( smtpmail-servers-requiring-authorization "^.happvalleygo\.org")
+	       ( smtpmail-smtp-service 465)))
+    ,(make-mu4e-context
+      :name "Personal"
+      :enter-func (lambda () (mu4e-message "Entering Personal context"))
+      :leave-func (lambda () (mu4e-message "Leaving Personal context"))
+      :match-func (lambda (msg)
+		    (when msg
+		      (or
+		       (mu4e-message-contact-field-matches msg
+			'(:to :from :cc :bcc) "mitchellschmeisser@librem.one"))))
+      :vars '( ( user-mail-address . "mitchellschmeisser@librem.one")
+	       ( user-full-name . "Mitchell Schmeisser")
+	       ( message-user-organization . "")
+	       ( message-signature . t)
+	       ( message-signature-file . "~/.personal-signature")
+	       ( smtpmail-default-smtp-server "smtp.librem.one")
+	       ( smtpmail-servers-requiring-authorization "^.librem\.one")
+	       ( smtpmail-smtp-service 567)))))
+
 
 (use-package mu4e
   :bind
@@ -57,6 +65,12 @@
      ( :name "librem"
        :key ?l
        :query "librem.one")
+     ( :name "psu"
+       :key ?p
+       :query "psu.edu")
+     ( :name "hvgc"
+       :key ?h
+       :query "mitchell@happyvalleygo.org")
      ( :name "junk"
        :hide-unread t
        :key ?j
@@ -64,10 +78,9 @@
   :config
   (require 'mu4e-org)
   (setq mu4e-change-filenames-when-moving t)
-
-  (setq mu4e-update-interval 60)
   (setq mu4e-get-mail-command "offlineimap -c ~/projects/dot_files/mail/offlineimaprc")
-  (setq message-send-mail-function 'smtpmail-send-it))
+  (setq message-send-mail-function 'smtpmail-send-it)
+  (setq mu4e-contexts mfs-mu4e-contexts))
 
 ;;;
 ;;; Elfeed
