@@ -132,14 +132,30 @@
    ("M-h" . org-metaleft)
    ("M-k" . org-metaup)
    ("M-j" . org-metadown))
+  :custom
+  (org-plantuml-exec-mode 'plantuml)
   :config
+  (setq org-latex-pdf-process '("xelatex -interaction nonstopmode %f"
+				"xelatex -interaction nonstopmode %f"))
+
+  ;; export cn character
+  (setf org-latex-default-packages-alist
+	(remove '("AUTO" "inputenc" t) org-latex-default-packages-alist))
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((shell . t)
-     (scheme . t)))
+     (scheme . t)
+     (plantuml . t)))
   (setq org-todo-keywords
-	'((sequence "TODO" "NEXT" "IN-PROGRESS" "|" "DONE")))
-  (setq org-default-notes-file (concat org-directory "/notes.org")))
+	'((sequence "TODO" "|" "DONE")))
+  (setq org-default-notes-file (concat org-directory "/notes.org"))
+  (setq org-capture-templates
+	`(("m" "Email Workflow")
+	  ("mf" "Follow Up" entry (file+olp "~/org/Mail.org" "Follow Up")
+	   "* TODO %a")
+	  ("mr" "Read Later" entry (file+olp "~/org/Mail.org" "Read Later")
+	   "* TODO %a"))))
+
 
 (use-package which-key
   :config
