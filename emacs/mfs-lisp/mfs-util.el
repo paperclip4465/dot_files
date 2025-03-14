@@ -27,4 +27,29 @@ STEP is 1"
       (setq counter (1+ counter)))
     (reverse list)))
 
+;;;###autoload
+(defun bits (x n-bits &optional acc)
+  (if (= 0 n-bits)
+      acc
+    (bits (ash x -1) (1- n-bits) (cons (logand x 1) acc))))
+
+(defun bits->number (bits &optional acc)
+  (or acc (setq acc 0))
+  (if bits
+      (bits->number (cdr bits) (logior (ash acc 1) (car bits)))
+    acc))
+
+(defun normalize-bits (bits)
+  (mapcar (lambda (x) (= x 1)) bits))
+
+;;;###autoload
+(defun make-truth-table (func n-bits)
+  (mapcar (lambda (x)
+            (let* ((vals (bits x n-bits '()))
+                   (res (apply func (normalize-bits vals))))
+              `(,@vals ,@(if (consp res)
+                             res
+                           (list res)))))
+          (iota (expt 2 n-bits) 0)))
+
 (provide 'mfs-util)
