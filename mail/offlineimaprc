@@ -51,4 +51,4 @@ ssl = yes
 
 [Repository local_hvgc]
 type = Maildir
-localfolders = ~/Mail/happvalleygo.org
+localfolders = ~/Mail/happyvalleygo.org
