@@ -2,49 +2,12 @@
 
 ;; auto-complete emacs address using bbdb command, optional
 (add-hook 'message-mode-hook
-	  (lambda ()
-	    (flyspell-mode t)
-	    (company-mode t)))
+          (lambda ()
+            (flyspell-mode t)
+            (company-mode t)))
 
 ;;;
 ;;; mu4e
-
-(defvar mfs-mu4e-contexts
-  `(,(make-mu4e-context
-      :name "HVGC"
-      :enter-func (lambda () (mu4e-message "Entering Happy Valley Go Club context"))
-      :leave-func (lambda () (mu4e-message "Leaving Happy Valley Go Club context"))
-      :match-func (lambda (msg)
-		    (when msg
-		      (or
-		       (mu4e-message-contact-field-matches msg
-			'(:to :from :bcc :cc) "mitchell@happyvalleygo.org"))))
-      :vars '( ( user-mail-address . "mitchell@happyvalleygo.org")
-	       ( user-full-name . "Mitchell Schmeisser")
-	       ( message-user-organization . "Happy Valley Go Club")
-	       ( message-signature . t)
-	       ( message-signature-file . "~/.hvgc-signature")
-	       ( smtpmail-default-smtp-server "smtp.titan.email")
-	       ( smtpmail-servers-requiring-authorization "^.happvalleygo\.org")
-	       ( smtpmail-smtp-service 465)))
-    ,(make-mu4e-context
-      :name "Personal"
-      :enter-func (lambda () (mu4e-message "Entering Personal context"))
-      :leave-func (lambda () (mu4e-message "Leaving Personal context"))
-      :match-func (lambda (msg)
-		    (when msg
-		      (or
-		       (mu4e-message-contact-field-matches msg
-			'(:to :from :cc :bcc) "mitchellschmeisser@librem.one"))))
-      :vars '( ( user-mail-address . "mitchellschmeisser@librem.one")
-	       ( user-full-name . "Mitchell Schmeisser")
-	       ( message-user-organization . "")
-	       ( message-signature . t)
-	       ( message-signature-file . "~/.personal-signature")
-	       ( smtpmail-default-smtp-server "smtp.librem.one")
-	       ( smtpmail-servers-requiring-authorization "^.librem\.one")
-	       ( smtpmail-smtp-service 567)))))
-
 
 (use-package mu4e
   :bind
@@ -64,13 +27,13 @@
        :query "ayd")
      ( :name "librem"
        :key ?l
-       :query "librem.one")
+       :query "contact:mitchellschmeisser@librem.one")
      ( :name "psu"
        :key ?p
        :query "psu.edu")
      ( :name "hvgc"
        :key ?h
-       :query "mitchell@happyvalleygo.org")
+       :query "contact:mitchell@happyvalleygo.org")
      ( :name "junk"
        :hide-unread t
        :key ?j
@@ -80,6 +43,42 @@
   (setq mu4e-change-filenames-when-moving t)
   (setq mu4e-get-mail-command "offlineimap -c ~/projects/dot_files/mail/offlineimaprc")
   (setq message-send-mail-function 'smtpmail-send-it)
+  (defvar mfs-mu4e-contexts
+    `(,(make-mu4e-context
+        :name "HVGC"
+        :enter-func (lambda () (mu4e-message "Entering Happy Valley Go Club context"))
+        :leave-func (lambda () (mu4e-message "Leaving Happy Valley Go Club context"))
+        :match-func (lambda (msg)
+                      (when msg
+                        (mu4e-message-contact-field-matches msg
+                                                            '(:to :from :bcc :cc)
+                                                            "mitchell@happyvalleygo.org")))
+        :vars '( (user-mail-address . "mitchell@happyvalleygo.org")
+                 (user-full-name . "Mitchell Schmeisser")
+                 (message-user-organization . "Happy Valley Go Club")
+                 (message-signature . t)
+                 (message-signature-file . "~/.hvgc-signature")
+                 (smtpmail-stream-type . ssl)
+                 (smtpmail-smtp-server . "smtp.titan.email")
+                 (smtpmail-servers-requiring-authorization . "smtp.titan.email")
+                 (smtpmail-smtp-service . 465)))
+      ,(make-mu4e-context
+        :name "Personal"
+        :enter-func (lambda () (mu4e-message "Entering Personal context"))
+        :leave-func (lambda () (mu4e-message "Leaving Personal context"))
+        :match-func (lambda (msg)
+                      (when msg
+                        (mu4e-message-contact-field-matches msg
+                                                            '(:to :from :cc :bcc)
+                                                            "mitchellschmeisser@librem.one")))
+        :vars '( (user-mail-address . "mitchellschmeisser@librem.one")
+                 (user-full-name . "Mitchell Schmeisser")
+                 (message-user-organization . "")
+                 (message-signature . t)
+                 (message-signature-file . "~/.personal-signature")
+                 (smtpmail-smtp-server . "smtp.librem.one")
+                 (smtpmail-servers-requiring-authorization . "smtp.librem.one")
+                 (smtpmail-smtp-service . 587)))))
   (setq mu4e-contexts mfs-mu4e-contexts))
 
 ;;;
@@ -88,11 +87,11 @@
 (use-package elfeed
   :init
   (setq elfeed-feeds
-	'("https://guix.gnu.org/feeds/blog.atom"
-	  "https://zipcpu.com/feed.xml"
-	  "https://protesilaos.com/books.xml"
-	  "https://protesilaos.com/codelog.xml"
-	  "https://hnrss.org/best.atom"))
+        '("https://guix.gnu.org/feeds/blog.atom"
+          "https://zipcpu.com/feed.xml"
+          "https://protesilaos.com/books.xml"
+          "https://protesilaos.com/codelog.xml"
+          "https://hnrss.org/best.atom"))
   :custom
   (elfeed-curl-extra-arguments .  '("-k"))
   :bind
